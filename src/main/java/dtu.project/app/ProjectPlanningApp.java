@@ -9,10 +9,9 @@ public class ProjectPlanningApp {
     }
 
     public boolean userLogin(String initials){
-        //Insert login fucntionality
-
-
+        loggedIn = initials.equals("huba");
         return loggedIn;
+
     }
 
 }
