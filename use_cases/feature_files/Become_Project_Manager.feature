@@ -1,3 +1,4 @@
+Feature: Become Project Manager
 Description: A worker wants to become a project manager when no project manager is currently assigned to a project
 Actor: User
 
