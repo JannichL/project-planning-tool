@@ -1,6 +1,7 @@
 package dtu.project.acceptance_tests;
 
 import dtu.project.app.ProjectPlanningApp;
+import dtu.project.app.User;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -10,20 +11,20 @@ import static org.junit.Assert.assertTrue;
 
 public class LoginLogoutSteps {
 
+    private ProjectPlanningApp projectPlanningApp;
+    private User user;
+    public LoginLogoutSteps(ProjectPlanningApp projectPlanningApp) {
+        this.projectPlanningApp = projectPlanningApp;
+    }
+
     @Given("that the User is logged in")
     public void thatTheUserIsLoggedIn() {
         // Write code here that turns the phrase above into concrete actions
         throw new io.cucumber.java.PendingException();
     }
     @Given("these IDs are contained in the database")
-    public void theseIDsAreContainedInTheDatabase(io.cucumber.datatable.DataTable dataTable) {
-        // Write code here that turns the phrase above into concrete actions
-        // For automatic transformation, change DataTable to one of
-        // E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or
-        // Map<K, List<V>>. E,K,V must be a String, Integer, Float,
-        // Double, Byte, Short, Long, BigInteger or BigDecimal.
-        //
-        // For other transformations you can register a DataTableType.
+    public void InitialsAreInDatabase(String initials) {
+        user = new User(initials);
         throw new io.cucumber.java.PendingException();
     }
     @Given("the User logs out")
@@ -33,7 +34,7 @@ public class LoginLogoutSteps {
     }
     @Given("that the User is not logged in")
     public void thatTheUserIsNotLoggedIn() {
-        // Write code here that turns the phrase above into concrete actions
+        assertFalse(projectPlanningApp.isLoggedIn());
         throw new io.cucumber.java.PendingException();
     }
     @Given("the worker ID is {string}")
@@ -51,5 +52,9 @@ public class LoginLogoutSteps {
         // Write code here that turns the phrase above into concrete actions
         throw new io.cucumber.java.PendingException();
     }
-
+    @Then("the User login fails")
+    public void theUserLoginFails() {
+        // Write code here that turns the phrase above into concrete actions
+        throw new io.cucumber.java.PendingException();
+    }
 }

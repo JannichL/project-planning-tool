@@ -1,6 +1,11 @@
 package dtu.project.app;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ProjectPlanningApp {
+
+    private List<User> users = new ArrayList<User>();
 
     private boolean loggedIn = false;
 
@@ -12,6 +17,10 @@ public class ProjectPlanningApp {
         loggedIn = initials.equals("huba");
         return loggedIn;
 
+    }
+
+    public void userLogout() {
+        loggedIn = false;
     }
 
 }
