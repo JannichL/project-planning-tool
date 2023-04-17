@@ -39,7 +39,7 @@ public class Task {
         return title;
     }
 
-    public float getBudgetedHours() {
+    public int getBudgetedHours() {
         return budgetedHours;
     }
 
