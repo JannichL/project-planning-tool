@@ -1,6 +1,6 @@
 Feature: View Available Worker
 Description: The worker is logged in to the project planning tool and wants to Views available workers
-Actor: worker
+Actor: User
 
 Scenario: Worker trying to view the available workers
 Given that the worker is logged in
