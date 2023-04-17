@@ -2,6 +2,7 @@ package dtu.project.app;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ProjectPlanningApp {
 
@@ -26,7 +27,7 @@ public class ProjectPlanningApp {
 
     public boolean userIsContainedInDatabase(String initials) {
         for (User user: users) {
-            if (user.initials.equals(initials)){
+            if (Objects.equals(user.getInitials(), initials)){
                 return true;
             }
         }

@@ -74,6 +74,11 @@ public class Project {
         this.isProjectManagerAssigned = true;
     }
 
+    public void removeProjectManager(String projectManager) {
+        this.projectManager = "";
+        this.isProjectManagerAssigned = false;
+    }
+
     public boolean getIsProjectManagerAssigned() {
         return isProjectManagerAssigned;
     }
@@ -93,7 +98,4 @@ public class Project {
     public int getTaskAmount() {
         return tasks.size();
     }
-
-
-
 }

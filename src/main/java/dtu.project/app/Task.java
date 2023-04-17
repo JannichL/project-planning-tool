@@ -17,4 +17,24 @@ public class Task {
         this.startWeek = startWeek;
         this.endWeek = endWeek;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getBudgettedHours() {
+        return budgettedHours;
+    }
+
+    public int getStartWeek() {
+        return startWeek;
+    }
+
+    public int getEndWeek() {
+        return endWeek;
+    }
+
+    public List<User> getAssignedWorkers() {
+        return assignedWorkers;
+    }
 }
