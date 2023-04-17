@@ -6,6 +6,7 @@ import java.util.List;
 public class ProjectPlanningApp {
 
     private List<User> users = new ArrayList<User>();
+    private List<Project> projects;
 
     private boolean loggedIn = false;
 
