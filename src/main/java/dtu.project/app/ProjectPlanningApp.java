@@ -24,4 +24,13 @@ public class ProjectPlanningApp {
         loggedIn = false;
     }
 
+    public boolean userIsContainedInDatabase(String initials) {
+        for (User user: users) {
+            if (user.initials.equals(initials)){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

@@ -13,15 +13,12 @@ public class LoginLogoutSteps {
 
     private ProjectPlanningApp projectPlanningApp;
     private User user;
+    private String initials;
+
     public LoginLogoutSteps(ProjectPlanningApp projectPlanningApp) {
         this.projectPlanningApp = projectPlanningApp;
     }
 
-    @Given("that the User is logged in")
-    public void thatTheUserIsLoggedIn() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
-    }
     @Given("these IDs are contained in the database")
     public void InitialsAreInDatabase(String initials) {
         user = new User(initials);
@@ -29,7 +26,8 @@ public class LoginLogoutSteps {
     }
     @Given("the User logs out")
     public void theUserLogsOut() {
-        // Write code here that turns the phrase above into concrete actions
+        projectPlanningApp.userLogout();
+        assertFalse(projectPlanningApp.isLoggedIn());
         throw new io.cucumber.java.PendingException();
     }
     @Given("that the User is not logged in")
@@ -38,23 +36,38 @@ public class LoginLogoutSteps {
         throw new io.cucumber.java.PendingException();
     }
     @Given("the worker ID is {string}")
-    public void theWorkerIDIs(String string) {
-        // Write code here that turns the phrase above into concrete actions
+    public void theWorkerIDIs(String initial) {
+        this.initials = initial;
         throw new io.cucumber.java.PendingException();
     }
     @Then("the User login succeeds")
     public void theUserLoginSucceeds() {
-        // Write code here that turns the phrase above into concrete actions
+        assertTrue(projectPlanningApp.userLogin(initials));
         throw new io.cucumber.java.PendingException();
     }
     @Then("the User is logged in")
     public void theUserIsLoggedIn() {
-        // Write code here that turns the phrase above into concrete actions
+        assertTrue(projectPlanningApp.isLoggedIn());
         throw new io.cucumber.java.PendingException();
     }
     @Then("the User login fails")
     public void theUserLoginFails() {
-        // Write code here that turns the phrase above into concrete actions
+        assertFalse(projectPlanningApp.userLogin(initials));
         throw new io.cucumber.java.PendingException();
+    }
+
+    @When("the User tries to login with the initials {string}")
+    public void theUserTriesToLoginWithTheInitials(String initialInput) {
+        projectPlanningApp.userLogin(initialInput);
+    }
+
+    @Then("the User with the initials {string} is found")
+    public void theUserWithTheInitialsIsFound() {
+        assertTrue(projectPlanningApp.userIsContainedInDatabase(initials));
+    }
+
+    @Then("the User is not logged in")
+    public void theUserIsNotLoggedIn() {
+        assertFalse(projectPlanningApp.isLoggedIn());
     }
 }

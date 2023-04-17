@@ -3,21 +3,20 @@ Feature: User login
   Actors: User
 
   Background: The database has a set of worker IDs
-    Given that the User is logged in
+    Given the User is logged in
     And these IDs are contained in the database
       | huba |
-      | aha |
+      | aha  |
       | ekki |
     And the User logs out
 
   Scenario: User can login
     Given that the User is not logged in
-    And the worker ID is "correct ID"
-    Then the User login succeeds
+    When the User tries to login with the initials "huba"
+    Then the User with the initials "huba" is found
     And the User is logged in
 
   Scenario: User has the wrong password
     Given that the User is not logged in
-    And the worker ID is "wrong ID"
-    Then the User login fails
-    And the User is not logged in
+    When the worker ID is "wrong ID"
+    Then the User is not logged in
