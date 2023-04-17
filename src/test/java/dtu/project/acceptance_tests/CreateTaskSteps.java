@@ -13,13 +13,13 @@ public class CreateTaskSteps {
     public CreateTaskSteps(ProjectPlanningApp projectPlanningApp){
         this.projectPlanningApp = projectPlanningApp;
     }
-    @Given("that the User is logged in")
+    /*@Given("that the User is logged in")
     public void UserIsLoggedIn() {
 
         assertTrue(projectPlanningApp.userLogin("test"));
         // Write code here that turns the phrase above into concrete actions
         throw new io.cucumber.java.PendingException();
-    }
+    }*/
 
     @Given("there is no ProjectManager elected")
     public void NoProjectManager() {
@@ -27,7 +27,7 @@ public class CreateTaskSteps {
         throw new io.cucumber.java.PendingException();
     }
 
-    @Given("there is a task with title ?Design?, budgetedHours {int}, startWeek {int}, and endWeek {int}")
+    @Given("there is a task with title {string}, budgetedHours {int}, startWeek {int}, and endWeek {int}")
     public void TaskExists(Integer int1, Integer int2, Integer int3) {
         // Write code here that turns the phrase above into concrete actions
         throw new io.cucumber.java.PendingException();
@@ -45,7 +45,7 @@ public class CreateTaskSteps {
         throw new io.cucumber.java.PendingException();
     }
 
-    @Then("the task with title ?Design?, budgetedHours {int}, startWeek {int}, and endWeek {int} is contained in the project")
+    @Then("the task with title {string}, budgetedHours {int}, startWeek {int}, and endWeek {int} is contained in the project")
     public void TaskExistsInProject(Integer int1, Integer int2, Integer int3) {
         // Write code here that turns the phrase above into concrete actions
         throw new io.cucumber.java.PendingException();
@@ -69,7 +69,7 @@ public class CreateTaskSteps {
         throw new io.cucumber.java.PendingException();
     }
 
-    @Then("the error message ?Only project manager can create tasks? is given")
+    @Then("the error message {string} is given")
     public void InvalidAccessCreateTask() {
         // Write code here that turns the phrase above into concrete actions
         throw new io.cucumber.java.PendingException();
