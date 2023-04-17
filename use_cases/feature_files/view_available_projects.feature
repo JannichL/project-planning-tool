@@ -1,3 +1,4 @@
+Feature: View available projects
 Description: A user searches for a project by looking through the created projects
 Actors: User
 
