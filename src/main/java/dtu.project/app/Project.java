@@ -95,7 +95,7 @@ public class Project {
         return assignedWorkers.size();
     }
 
-    public int getTaskAmount() {
+    public int  getTaskAmount() {
         return tasks.size();
     }
 }
