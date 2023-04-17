@@ -1,13 +1,22 @@
 package dtu.project.acceptance_tests;
 
+import dtu.project.app.ProjectPlanningApp;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class CreateTaskSteps {
 
+    private ProjectPlanningApp projectPlanningApp;
+    public CreateTaskSteps(ProjectPlanningApp projectPlanningApp){
+        this.projectPlanningApp = projectPlanningApp;
+    }
     @Given("that the User is logged in")
     public void UserIsLoggedIn() {
+
+        assertTrue(projectPlanningApp.userLogin("test"));
         // Write code here that turns the phrase above into concrete actions
         throw new io.cucumber.java.PendingException();
     }
