@@ -1,6 +1,6 @@
-package dtu.project.acceptance_tests;
+package dtu.project.app.project.acceptance_tests;
 
-import dtu.project.app.ProjectPlanningApp;
+import dtu.project.app.application.ProjectPlanningApp;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;

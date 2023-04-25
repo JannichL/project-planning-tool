@@ -1,4 +1,7 @@
-package dtu.project.app;
+package dtu.project.app.application;
+
+import dtu.project.app.objects.Project;
+import dtu.project.app.objects.User;
 
 import java.util.ArrayList;
 import java.util.List;

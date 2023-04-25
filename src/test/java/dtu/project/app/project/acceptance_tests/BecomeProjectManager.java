@@ -1,7 +1,7 @@
-package dtu.project.acceptance_tests;
+package dtu.project.app.project.acceptance_tests;
 
-import dtu.project.app.Project;
-import dtu.project.app.User;
+import dtu.project.app.objects.Project;
+import dtu.project.app.objects.User;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;

@@ -1,4 +1,4 @@
-package dtu.project.app;
+package dtu.project.app.objects;
 import java.util.ArrayList;
 public class Project {
 

@@ -1,4 +1,4 @@
-package dtu.project.acceptance_tests;
+package dtu.project.app.project.acceptance_tests;
 
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
