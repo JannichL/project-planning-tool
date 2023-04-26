@@ -14,7 +14,7 @@ Feature: User login
     Then the User with the initials "huba" is found
     And the User is logged in
 
-  Scenario: User has the wrong password
+  Scenario: User has the wrong initials
     Given that the User is not logged in
     When the worker ID is "wrong ID"
     Then the User is not logged in
