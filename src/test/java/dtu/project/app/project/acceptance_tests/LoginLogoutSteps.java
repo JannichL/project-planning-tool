@@ -2,6 +2,7 @@ package dtu.project.app.project.acceptance_tests;
 
 import dtu.project.app.application.ProjectPlanningApp;
 import dtu.project.app.objects.User;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -69,6 +70,13 @@ public class LoginLogoutSteps {
 
     @Given("the User is already logged in")
     public void theUserIsAlreadyLoggedIn() {
-        assertFalse(projectPlanningApp.isLoggedIn());
+        assertTrue(projectPlanningApp.isLoggedIn());
+    }
+
+
+    @And("the User is logged in with the initials {string}")
+    public void theUserIsLoggedInWithTheInitials(String initials) {
+        projectPlanningApp.userLogin(initials);
+        assertTrue(projectPlanningApp.isLoggedIn());
     }
 }

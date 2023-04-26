@@ -3,7 +3,7 @@ Feature: User login
   Actors: User
 
   Background: The database has a set of worker IDs
-    And these IDs are contained in the database
+    Given these IDs are contained in the database
       | huba |
       | aha  |
       | ekki |
