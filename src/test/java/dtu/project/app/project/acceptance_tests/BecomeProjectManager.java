@@ -12,7 +12,7 @@ public class BecomeProjectManager {
     private User user;
 
     @Given("A project is called Project1")
-    public void projectThatIsCalledPoject1() {
+    public void projectThatIsCalledProject1() {
         // create a project with no project manager assigned
         project = new Project("Project1", 100, 1, 10);
     }

@@ -3,15 +3,13 @@ Feature: User login
   Actors: User
 
   Background: The database has a set of worker IDs
-    Given the User is logged in
     And these IDs are contained in the database
       | huba |
       | aha  |
       | ekki |
-    And the User logs out
 
   Scenario: User can login
-    Given that the User is not logged in
+    Given the User is not logged in
     When the User tries to login with the initials "huba"
     Then the User with the initials "huba" is found
     And the User is logged in

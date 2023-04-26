@@ -6,4 +6,5 @@ module dtu.project.app {
 
     opens dtu.project.app.GUI to javafx.fxml;
     exports dtu.project.app.GUI;
+    exports dtu.project.app.application;
 }
