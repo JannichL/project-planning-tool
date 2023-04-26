@@ -3,6 +3,6 @@ Feature: User logout
   Actor: User
 
   Scenario: User logs out
-    Given that the User is logged in
+    Given the User is logged in
     When the User logs out
     Then the User is not logged in
