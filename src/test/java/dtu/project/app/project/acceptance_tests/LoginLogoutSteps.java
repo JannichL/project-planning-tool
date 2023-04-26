@@ -66,4 +66,9 @@ public class LoginLogoutSteps {
     public void theUserIsNotLoggedIn() {
         assertFalse(projectPlanningApp.isLoggedIn());
     }
+
+    @Given("the User is already logged in")
+    public void theUserIsAlreadyLoggedIn() {
+        assertFalse(projectPlanningApp.isLoggedIn());
+    }
 }
