@@ -1,40 +1,41 @@
 package dtu.project.app.project.acceptance_tests;
 
+import dtu.project.app.application.ProjectPlanningApp;
+import dtu.project.app.objects.Project;
+import dtu.project.app.objects.User;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
+import java.util.List;
+import java.util.ListIterator;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 public class CreateProjectSteps {
-    @Given("that the User is logged in.")
-    public void thatTheUserIsLoggedIn() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
-    }
-    @Given("a project with that name is not in the database.")
-    public void aProjectWithThatNameIsNotInTheDatabase() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
-    }
-    @When("the project is added to the database")
-    public void theProjectIsAddedToTheDatabase() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
-    }
-    @Then("the project is stored in the database")
-    public void theProjectIsStoredInTheDatabase() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
-    }
 
-    @Given("that the User is not logged in.")
-    public void thatTheUserIsNotLoggedIn() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
-    }
-    @Given("there is a project that needs to be created.")
-    public void thereIsAProjectThatNeedsToBeCreated() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
-    }
+    private ProjectPlanningApp projectPlanningApp;
+    private Project project;
+    private User user;
 
+    public CreateProjectSteps(ProjectPlanningApp projectPlanningApp) {
+        this.projectPlanningApp = projectPlanningApp;
+    }
+    @Given("these Projects are contained in the database")
+    public void projectsWithTheseNamesAreContainedInTheDatabase(List<String> names) {
+        names = projectPlanningApp.getProjectNames();
+        for (String name : names){
+            projectPlanningApp.projectIsContainedInDatabase(name);
+        }
+    }
+    @Given("a project with {string} name is not in the database")
+    public void aProjectWithThatNameIsNotInTheDatabase(String projectName) {
+        assertFalse(projectPlanningApp.projectIsContainedInDatabase("Project5"));
+    }
+    @When("the project {string} is created its stored in the database")
+    public void theProjectIsStoredInTheDatabase(String Project5) {
+        Project project = new Project(Project5, 10, 1, 2);
+        projectPlanningApp.addProjectToDatabase(project);
+    }
 }

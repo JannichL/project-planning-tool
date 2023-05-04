@@ -105,6 +105,24 @@ public class ProjectPlanningApp {
         uniqueID++;
     }
 
+    public boolean projectIsContainedInDatabase(String title) {
+        for (Project project: projects) {
+            if (Objects.equals(project.getName(), title)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public List<String> getProjectNames() {
+        List<String> projectNames = new ArrayList<>();
+        for (Project project : projects) {
+            projectNames.add(project.getName());
+        }
+        return projectNames;
+    }
+
+
     public void addUserToDatabase(String initials){
         users.add(new User(initials));
     }
