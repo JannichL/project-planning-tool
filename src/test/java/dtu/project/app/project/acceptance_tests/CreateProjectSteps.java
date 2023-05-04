@@ -35,7 +35,6 @@ public class CreateProjectSteps {
     }
     @When("the project {string} is created its stored in the database")
     public void theProjectIsStoredInTheDatabase(String Project5) {
-        Project project = new Project(Project5, 10, 1, 2);
-        projectPlanningApp.addProjectToDatabase(project);
+        projectPlanningApp.createNewProject(Project5);
     }
 }
