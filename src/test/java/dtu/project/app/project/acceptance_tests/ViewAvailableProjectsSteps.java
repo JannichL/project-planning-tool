@@ -3,6 +3,7 @@ package dtu.project.app.project.acceptance_tests;
 import dtu.project.app.application.ProjectPlanningApp;
 import dtu.project.app.objects.Project;
 import dtu.project.app.objects.User;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -48,5 +49,10 @@ public class ViewAvailableProjectsSteps {
     @Then("no projects will be shown")
     public void noProjectsWillBeShown() {
         assertTrue(projectPlanningApp.getProjectNames().isEmpty());
+}
+
+    @And("that there are projects available")
+    public void thatThereAreProjectsAvailable() {
+        assertFalse(projectPlanningApp.getProjectNames().isEmpty());
     }
 }
