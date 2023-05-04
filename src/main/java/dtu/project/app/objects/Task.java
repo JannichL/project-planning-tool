@@ -15,7 +15,7 @@ public class Task {
     private boolean isCompleted;
     private Project project; // Project that the task belongs to
 
-    public Task(String id, String title, int budgetedHours, int startWeek, int endWeek, Project project){
+    public Task(String title, int budgetedHours, int startWeek, int endWeek){
 
 
         this.id = id;

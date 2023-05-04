@@ -14,7 +14,7 @@ public class BecomeProjectManager {
     @Given("A project is called Project1")
     public void projectThatIsCalledProject1() {
         // create a project with no project manager assigned
-        project = new Project("Project1", 100, 1, 10);
+        project = new Project("Project1");
     }
 
     @And("A User is called AB")

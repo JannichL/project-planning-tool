@@ -1,7 +1,10 @@
 package dtu.project.app.objects;
 import java.util.ArrayList;
+import java.util.Objects;
+
 public class Project {
 
+    private String projectId;
     private String title;
     private int budgettedHours;
     private int startWeek;
@@ -13,11 +16,8 @@ public class Project {
     private boolean isProjectManagerAssigned;
     private boolean isCompleted;
 
-    public Project(String title, int budgettedHours, int startWeek, int endWeek) {
+    public Project(String title) {
         this.title = title;
-        this.budgettedHours = budgettedHours;
-        this.startWeek = startWeek;
-        this.endWeek = endWeek;
         this.assignedWorkers = new ArrayList<>();
         this.tasks = new ArrayList<>();
         this.projectManager = null;
@@ -29,16 +29,8 @@ public class Project {
         return title;
     }
 
-    public int getBudgettedHours() {
-        return budgettedHours;
-    }
-
-    public int getStartWeek() {
-        return startWeek;
-    }
-
-    public int getEndWeek() {
-        return endWeek;
+    public void setProjectId(String ID){
+        this.projectId = ID;
     }
 
     public ArrayList<User> getAssignedWorkers() {
@@ -79,6 +71,14 @@ public class Project {
         this.isProjectManagerAssigned = false;
     }
 
+    public Task getTask(String taskName){
+        for(Task task : tasks){
+            if(Objects.equals(task.getTitle(), taskName)){
+                return task;
+            }
+        }
+        return null;
+    }
     public boolean getIsProjectManagerAssigned() {
         return isProjectManagerAssigned;
     }
@@ -92,10 +92,20 @@ public class Project {
     }
 
     public int getWorkerAmount() {
-        return assignedWorkers.size();
+            return assignedWorkers.size();
     }
 
-    public int  getTaskAmount() {
+    public int getTaskAmount() {
         return tasks.size();
+    }
+
+    public int getTasksCompleted() {
+        int completed = 0;
+        for(Task task : tasks){
+            if(task.getIsCompleted()){
+                completed++;
+            }
+        }
+        return completed;
     }
 }
