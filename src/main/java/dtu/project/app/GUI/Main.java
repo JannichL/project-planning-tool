@@ -14,7 +14,7 @@ public class Main extends Application {
         //URL fxmlLoader = getClass().getResource("login.fxml");
         //System.out.println(fxmlLoader);
         //FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../../../../resources/login.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 1920, 1080);
+        Scene scene = new Scene(fxmlLoader.load(), 1080, 640);
         stage.setTitle("Project planning tool");
         stage.setScene(scene);
         stage.show();

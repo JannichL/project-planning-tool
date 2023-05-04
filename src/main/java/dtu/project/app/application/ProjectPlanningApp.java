@@ -10,8 +10,11 @@ import java.util.Objects;
 public class ProjectPlanningApp {
 
     private User currentUser = null;
+    private Project currentProject = null;
+    private Project nameOfProject = null;
     private List<User> users = new ArrayList<User>();
-    private List<Project> projects;
+    private List<Project> projects = new ArrayList<Project>();
+    private List<Project> getName = new ArrayList<Project>();
 
     private boolean loggedIn = false;
 
@@ -43,7 +46,31 @@ public class ProjectPlanningApp {
         return false;
     }
 
+    public boolean projectIsContainedInDatabase(String title) {
+        for (Project project: projects) {
+            if (Objects.equals(project.getName(), title)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public List<String> getProjectNames() {
+        List<String> projectNames = new ArrayList<>();
+        for (Project project : projects) {
+            projectNames.add(project.getName());
+        }
+        return projectNames;
+    }
+
+
     public void addUserToDatabase(String initials){
         users.add(new User(initials));
+    }
+
+    public void addProjectToDatabase(Project project) {
+        if (!projectIsContainedInDatabase(project.getName())) {
+            projects.add(project);
+        }
     }
 }
