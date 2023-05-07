@@ -16,8 +16,6 @@ import static org.junit.Assert.assertTrue;
 public class CreateProjectSteps {
 
     private ProjectPlanningApp projectPlanningApp;
-    private Project project;
-    private User user;
 
     public CreateProjectSteps(ProjectPlanningApp projectPlanningApp) {
         this.projectPlanningApp = projectPlanningApp;

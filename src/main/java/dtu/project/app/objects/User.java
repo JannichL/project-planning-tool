@@ -16,6 +16,9 @@ public class User {
         loggedHours.add(logHours);
     }
 
+    private List<Integer> sickDays = new ArrayList<>();
+
+    private List<Integer> vacationDays = new ArrayList<>();
     private List<Task> assignedTasks;
     public User(String initials) {
         this.initials = initials;
@@ -42,6 +45,24 @@ public class User {
             this.isAvailable = true;
         }
     }
+
+    public void addSickDays(int days) {
+        sickDays.add(days);
+    }
+
+    public List<Integer> getSickDays() {
+        return sickDays;
+    }
+
+    public void addVacationDays(int days) {
+        vacationDays.add(days);
+    }
+
+    public List<Integer> getVacationDays() {
+        return vacationDays;
+    }
+
+
 
     public Boolean getIsAvailable(){
         return isAvailable;
