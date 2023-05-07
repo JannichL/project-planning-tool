@@ -18,12 +18,14 @@ public class ProjectPlanningApp {
     private User currentUser = null;
     private List<User> users = new ArrayList<User>();
     private List<Project> projects = new ArrayList<Project>();
-    private ObservableList<Project> projectsView = FXCollections.observableArrayList();;
+    private ObservableList<Project> projectsView = FXCollections.observableArrayList();
 
 
     private boolean loggedIn = false;
 
     public ProjectPlanningApp(){
+
+        //Test data for UI testing
         users.add(new User("huba"));
         users.add(new User("aha"));
         users.add(new User("ekki"));
@@ -33,6 +35,7 @@ public class ProjectPlanningApp {
         project1.addTask(new Task("Task3", 1, 1, 2));
         project1.getTask("Task1").markCompleted();
         project1.getTask("Task2").markCompleted();
+        project1.setProjectManager("ekki");
         Project project2 = new Project("Test2");
         project2.addTask(new Task("Task1", 1, 1, 2));
         project2.addTask(new Task("Task2", 1, 1, 2));

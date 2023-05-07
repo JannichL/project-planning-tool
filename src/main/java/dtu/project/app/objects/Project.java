@@ -1,4 +1,7 @@
 package dtu.project.app.objects;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -6,12 +9,10 @@ public class Project {
 
     private String projectId;
     private String title;
-    private int budgettedHours;
-    private int startWeek;
-    private int endWeek;
 
     private ArrayList<User> assignedWorkers;
     private ArrayList<Task> tasks;
+    private ObservableList<Task> tasksView = FXCollections.observableArrayList();
     private String projectManager;
     private boolean isProjectManagerAssigned;
     private boolean isCompleted;
@@ -107,5 +108,10 @@ public class Project {
             }
         }
         return completed;
+    }
+
+    public ObservableList<Task> getAllTasksViewable(){
+        tasksView.addAll(tasks);
+        return tasksView;
     }
 }

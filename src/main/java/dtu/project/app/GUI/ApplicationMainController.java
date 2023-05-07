@@ -17,16 +17,18 @@ import javafx.util.Callback;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 public class ApplicationMainController{
 
-    private ProjectPlanningApp projectPlanningApp;
-    private ObservableList<Project> projectsView;
+    private final ProjectPlanningApp projectPlanningApp;
+    //private ObservableList<Project> projectsView;
 
-    private List<User> users;
-    private ObservableList<Project> projects;
-    private List<Task> tasks;
+    //private List<User> users;
+    //private ObservableList<Project> projects;
+    //private List<Task> tasks;
 
+    private Project currentProject;
 
     public ApplicationMainController(){
         this.projectPlanningApp = new ProjectPlanningApp();
@@ -36,10 +38,10 @@ public class ApplicationMainController{
     private ListView<Project> listAvailableProjects;
 
     @FXML
-    private ListView<Project> availableTasksList;
+    private ListView<Task> listAvailableTasks;
 
     @FXML
-    private TextField textFieldInitials;
+    private TextField textFieldProjectName;
 
     @FXML
     private Label labelCurrentUser;
@@ -55,6 +57,8 @@ public class ApplicationMainController{
     private ProgressBar progressTasksCompleted;
     @FXML
     private Button buttonBecomeManager;
+    @FXML
+    private Button buttonResign;
 
     @FXML
     private Button buttonLogout;
@@ -69,12 +73,21 @@ public class ApplicationMainController{
     }
 
     public boolean successfulLogin(String initials){
-        return projectPlanningApp.userIsContainedInDatabase(initials);
+        if(projectPlanningApp.userIsContainedInDatabase(initials)){
+            projectPlanningApp.userLogin(initials);
+            return true;
+        }
+        return false;
     }
     public void initializeData(){
 
-        listAvailableProjects.setItems(projectPlanningApp.getAllProjectsViewable());
+        displayProjects();
+    }
 
+    @FXML
+    private void displayProjects(){
+        listAvailableProjects.getItems().clear();
+        listAvailableProjects.setItems(projectPlanningApp.getAllProjectsViewable());
         listAvailableProjects.setCellFactory(new Callback<ListView<Project>, ListCell<Project>>() {
             @Override
             public ListCell<Project> call(ListView<Project> param) {
@@ -98,27 +111,77 @@ public class ApplicationMainController{
                     public void changed(ObservableValue<? extends Project> ov,
                                         Project oldValue, Project newValue) {
                         if(newValue != null) {
-                            labelProjectName.setText("Project name: " + newValue.getName());
-
-                            if(newValue.getIsProjectManagerAssigned()) {
-                                labelManagerAssigned.setText("Current project manager: " + newValue.getProjectManager());
-                                buttonBecomeManager.setVisible(false);
-                            } else {
-                                labelManagerAssigned.setText("Current project manager: ");
-                                buttonBecomeManager.setVisible(true);
-                            }
-                            labelTotalWorkers.setText("Total workers assigned: " + Integer.toString(newValue.getWorkerAmount()));
-                            labelTasksCompleted.setText("Tasks completed: " +
-                                                        Integer.toString(newValue.getTasksCompleted()) +
-                                                        " / " +
-                                                        Integer.toString(newValue.getTaskAmount()));
-                            double progress = (double) newValue.getTasksCompleted()/(double) newValue.getTaskAmount();
-                            progressTasksCompleted.setProgress(progress);
+                            displayCurrentProject(newValue);
+                            displayTasks(newValue);
                         }
-
                     }
                 });
     }
+    @FXML
+    private void displayCurrentProject(Project project){
+        currentProject = project;
+        labelProjectName.setText("Project name: " + project.getName());
+
+        if(project.getIsProjectManagerAssigned()) {
+            labelManagerAssigned.setText("Current project manager: " + project.getProjectManager());
+            buttonBecomeManager.setVisible(false);
+            if(Objects.equals(projectPlanningApp.getCurrentUser().getInitials(), project.getProjectManager())){
+                labelManagerAssigned.setText("Current project manager: " + project.getProjectManager() + " (you)");
+                buttonResign.setVisible(true);
+            } else {
+                buttonResign.setVisible(false);
+            }
+        } else {
+            labelManagerAssigned.setText("Current project manager: ");
+            buttonBecomeManager.setVisible(true);
+            buttonResign.setVisible(false);
+        }
+        labelTotalWorkers.setText("Total workers assigned: " + project.getWorkerAmount());
+        labelTasksCompleted.setText("Tasks completed: " +
+                project.getTasksCompleted() +
+                " / " +
+                project.getTaskAmount());
+        double progress = (double) project.getTasksCompleted()/(double) project.getTaskAmount();
+        progressTasksCompleted.setProgress(progress);
+    }
+
+    public void displayTasks(Project project){
+        listAvailableTasks.getItems().clear();
+        listAvailableTasks.setItems(project.getAllTasksViewable());
+        listAvailableTasks.setCellFactory(new Callback<ListView<Task>, ListCell<Task>>() {
+            @Override
+            public ListCell<Task> call(ListView<Task> param) {
+                ListCell<Task> cell; // ListCell
+
+                cell = new ListCell<Task>() {
+                    @Override
+                    public void updateItem(Task task, boolean empty) {
+                        super.updateItem(task, empty);
+                        if (task != null) {
+                            setText(task.getTitle());
+                        }
+                    }
+                };
+                return cell;
+            }
+        });
+
+        listAvailableTasks.getSelectionModel().selectedItemProperty().addListener(
+                new ChangeListener<Task>() {
+                    public void changed(ObservableValue<? extends Task> ov,
+                                        Task oldValue, Task newValue) {
+                        if(newValue != null) {
+                            displayCurrentTask(newValue);
+                        }
+                    }
+                });
+    }
+
+    @FXML
+    public void displayCurrentTask(Task task){
+
+    }
+
     @FXML
     public void logout(ActionEvent actionEvent) throws IOException {
 
@@ -132,28 +195,24 @@ public class ApplicationMainController{
 
         projectPlanningApp.userLogout();
     }
-    /*
+
     @FXML
-    public void login(ActionEvent actionEvent) throws IOException{
-        User u = new User("huba");
-        Node node = (Node) actionEvent.getSource();
-        Stage stage = (Stage) node.getScene().getWindow();
-        stage.close();
-        try{
-            Parent root = FXMLLoader.load(Main.class.getResource("projectview.fxml"));
-            stage.setUserData(projectPlanningApp);
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e){
-            System.err.println(String.format("Error: %s", e.getMessage()));
-        }
-    }
-    */
-    @FXML
-    public void changeLabel(ActionEvent actionEvent){
-        //Displays username in lower right corner
-        labelCurrentUser.setText(projectPlanningApp.getCurrentUser().getInitials());
+    public void becomeProjectManager(ActionEvent actionevent){
+        currentProject.setProjectManager(projectPlanningApp.getCurrentUser().getInitials());
+        displayCurrentProject(currentProject);
     }
 
+    @FXML
+    public void removeProjectManager(ActionEvent actionevent){
+        currentProject.removeProjectManager(projectPlanningApp.getCurrentUser().getInitials());
+        displayCurrentProject(currentProject);
+    }
+
+    @FXML
+    public void createNewProject(ActionEvent actionevent){
+        String projectName = textFieldProjectName.getText();
+        if(!projectPlanningApp.projectIsContainedInDatabase(projectName)) {
+            projectPlanningApp.createNewProject(projectName);
+        }
+    }
 }

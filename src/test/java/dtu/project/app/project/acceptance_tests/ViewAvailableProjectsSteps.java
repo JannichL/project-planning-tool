@@ -42,7 +42,7 @@ public class ViewAvailableProjectsSteps {
     @Given("that there are no projects available")
     public void thatThereAreNoProjectsAvailable() {
         List<String> projectNames = projectPlanningApp.getProjectNames();
-        if (!projectNames.isEmpty())
+        if (projectNames.isEmpty())
             System.out.println("No projects are currently in the database");
     }
 
