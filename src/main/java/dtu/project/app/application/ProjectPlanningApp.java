@@ -138,4 +138,5 @@ public class ProjectPlanningApp {
         projectsView.addAll(projects);
         return projectsView;
     }
+
 }
