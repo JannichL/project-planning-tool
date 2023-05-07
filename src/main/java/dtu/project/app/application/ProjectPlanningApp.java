@@ -117,6 +117,7 @@ public class ProjectPlanningApp {
         return false;
     }
 
+
     public List<String> getProjectNames() {
         List<String> projectNames = new ArrayList<>();
         for (Project project : projects) {
@@ -138,5 +139,6 @@ public class ProjectPlanningApp {
         projectsView.addAll(projects);
         return projectsView;
     }
+
 
 }

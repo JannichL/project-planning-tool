@@ -11,8 +11,8 @@ public class User {
 
     private List<String[]> loggedHours = new ArrayList<String[]>();
 
-    public void addLogHours(String ProjectID, String Task, String Hours) {
-        String[] logHours = {ProjectID, Task, Hours};
+    public void addLogHours(String ProjectID, String Task, Integer Hours) {
+        String[] logHours = {ProjectID, Task, Integer.toString(Hours)};
         loggedHours.add(logHours);
     }
 
@@ -21,6 +21,15 @@ public class User {
         this.initials = initials;
         this.assignedTasks = new ArrayList<Task>();
         this.isAvailable = true;
+    }
+
+    public boolean getLoggedHours(String ProjectID, String Task, Integer Hours) {
+        for (String[] logHours : loggedHours) {
+            if (logHours[0].equals(ProjectID) && logHours[1].equals(Task) && logHours[2].equals(Integer.toString(Hours))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getInitials() {
