@@ -12,7 +12,6 @@ public class Project {
 
     private ArrayList<User> assignedWorkers;
     private ArrayList<Task> tasks;
-    private ObservableList<Task> tasksView = FXCollections.observableArrayList();
     private String projectManager;
     private boolean isProjectManagerAssigned;
     private boolean isCompleted;
@@ -92,13 +91,19 @@ public class Project {
         this.isCompleted = true;
     }
 
+    //PLEASE REDO THIS FUNCTION!
     public int getWorkerAmount() {
-            return assignedWorkers.size();
+        int workerAmount = 0;
+         for(Task task : tasks) {
+             workerAmount += task.getWorkerAmount();
+         }
+         return  workerAmount;
     }
 
     public int getTaskAmount() {
         return tasks.size();
     }
+    public String getProjectId(){return projectId;}
 
     public int getTasksCompleted() {
         int completed = 0;
@@ -111,7 +116,22 @@ public class Project {
     }
 
     public ObservableList<Task> getAllTasksViewable(){
+        ObservableList<Task> tasksView = FXCollections.observableArrayList();
         tasksView.addAll(tasks);
         return tasksView;
+    }
+
+    public ObservableList<Task> getMyTasksViewable(User currentUser){
+        ObservableList<Task> taskView = FXCollections.observableArrayList();
+        nextProject:
+            for(Task task : tasks){
+                for(User user : task.getAssignedWorkers()){
+                    if(Objects.equals(user.getInitials(), currentUser.getInitials())){
+                        taskView.add(task);
+                        break nextProject;
+                    }
+                }
+            }
+        return taskView;
     }
 }

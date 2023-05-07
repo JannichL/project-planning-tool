@@ -18,8 +18,6 @@ public class ProjectPlanningApp {
     private User currentUser = null;
     private List<User> users = new ArrayList<User>();
     private List<Project> projects = new ArrayList<Project>();
-    private ObservableList<Project> projectsView = FXCollections.observableArrayList();
-
 
     private boolean loggedIn = false;
 
@@ -29,21 +27,19 @@ public class ProjectPlanningApp {
         users.add(new User("huba"));
         users.add(new User("aha"));
         users.add(new User("ekki"));
-        Project project1 = new Project("Test1");
-        project1.addTask(new Task("Task1", 1, 1, 2));
-        project1.addTask(new Task("Task2", 1, 1, 2));
-        project1.addTask(new Task("Task3", 1, 1, 2));
-        project1.getTask("Task1").markCompleted();
-        project1.getTask("Task2").markCompleted();
-        project1.setProjectManager("ekki");
-        Project project2 = new Project("Test2");
-        project2.addTask(new Task("Task1", 1, 1, 2));
-        project2.addTask(new Task("Task2", 1, 1, 2));
-        project2.addTask(new Task("Task3", 1, 1, 2));
-        project2.getTask("Task1").markCompleted();
-        project2.setProjectManager("huba");
-        projects.add(project1);
-        projects.add(project2);
+        for(int i = 0; i < 10; i++){
+            createNewProject("Test" + i);
+        }
+        for(Project project : projects){
+            for(int i = 0; i < 10; i++){
+                project.addTask(new Task("Task" + i, i*10, i, i+1));
+                if(i%2==0) {
+                    project.getTask("Task" + i).markCompleted();
+                    project.getTask("Task" + i).assignWorker(users.get(0));
+                }
+            }
+            project.setProjectManager("huba");
+        }
     }
     public boolean isLoggedIn(){
         return loggedIn;
@@ -135,7 +131,24 @@ public class ProjectPlanningApp {
     }
 
     public ObservableList<Project> getAllProjectsViewable(){
+        ObservableList<Project> projectsView = FXCollections.observableArrayList();
         projectsView.addAll(projects);
+        return projectsView;
+    }
+
+    public ObservableList<Project> getMyProjectsViewable(){
+        ObservableList<Project> projectsView = FXCollections.observableArrayList();
+        nextProject:
+        for(Project project : projects){
+            for(Task task : project.getTasks()){
+                for(User user : task.getAssignedWorkers()){
+                    if(Objects.equals(user.getInitials(), currentUser.getInitials())){
+                        projectsView.add(project);
+                        break nextProject;
+                    }
+                }
+            }
+        }
         return projectsView;
     }
 }

@@ -55,6 +55,8 @@ public class Task {
         return assignedWorkers;
     }
 
+    public int getWorkerAmount(){ return assignedWorkers.size();}
+
     public boolean getIsCompleted() {
         return isCompleted;
     }
