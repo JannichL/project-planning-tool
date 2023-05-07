@@ -49,10 +49,6 @@ public class ViewAvailableProjectsSteps {
     @Then("no projects will be shown")
     public void noProjectsWillBeShown() {
         assertTrue(projectPlanningApp.getProjectNames().isEmpty());
-}
-
-    @And("that there are projects available")
-    public void thatThereAreProjectsAvailable() {
-        assertFalse(projectPlanningApp.getProjectNames().isEmpty());
     }
+
 }

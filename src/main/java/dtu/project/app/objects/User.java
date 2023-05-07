@@ -8,11 +8,28 @@ public class User {
     private int MAX_AMOUNT_OF_ASSIGNED_TASKS = 20;
     private String initials;
     private Boolean isAvailable;
+
+    private List<String[]> loggedHours = new ArrayList<String[]>();
+
+    public void addLogHours(String ProjectID, String Task, Integer Hours) {
+        String[] logHours = {ProjectID, Task, Integer.toString(Hours)};
+        loggedHours.add(logHours);
+    }
+
     private List<Task> assignedTasks;
     public User(String initials) {
         this.initials = initials;
         this.assignedTasks = new ArrayList<Task>();
         this.isAvailable = true;
+    }
+
+    public boolean getLoggedHours(String ProjectID, String Task, Integer Hours) {
+        for (String[] logHours : loggedHours) {
+            if (logHours[0].equals(ProjectID) && logHours[1].equals(Task) && logHours[2].equals(Integer.toString(Hours))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getInitials() {
