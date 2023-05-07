@@ -40,7 +40,7 @@ public class LogHoursStep {
 
     @When("the User logs {int} hours of work on a project with the ID {string} on task {string}")
     public void theUserLogsHoursOfWorkOnAProjectWithTheIDOnTask(Integer Hours, String ID, String Task) {
-        
+
         throw new io.cucumber.java.PendingException();
     }
 
