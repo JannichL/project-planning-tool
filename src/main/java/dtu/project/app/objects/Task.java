@@ -73,6 +73,8 @@ public class Task {
         assignedWorkers.add(worker);
     }
 
+    public void removeWorker(User worker){assignedWorkers.remove(worker);}
+
     public void complete() {
         isCompleted = true;
     }

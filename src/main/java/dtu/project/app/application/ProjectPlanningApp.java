@@ -25,31 +25,59 @@ public class ProjectPlanningApp {
 
     public ProjectPlanningApp() throws InvalidOperationException{
 
-        //setTestData();
+        setTestData();
     }
 
     private void setTestData() throws InvalidOperationException{
         //Test data for UI testing
-        for(int i = 0; i < 10; i++){
-            createNewProject("Test" + i);
-        }
-        for(Project project : projects){
-            for(int j = 0; j < 10; j++){
-                project.addTask(new Task("Task" + j, j*10, j, j+1));
-                if( j % 2 == 0) {
-                    project.getTask("Task" + j).complete();
-                    project.getTask("Task" + j).assignWorker(users.get(0));
-                }
-            }
-            project.setProjectManager("huba");
-        }
-        createNewProject("Ekki personal project");
+        users.add(new User("huba"));
+        users.add(new User("ekki"));
+        users.add(new User("aha"));
 
-        for(Project project : projects) {
-            if(projectIsContainedInDatabase("Ekki personal project")){
+        createNewProject("Software planning tool");
+        createNewProject("Calculator");
+        createNewProject("Corona Dashboard");
+
+        int i = 1;
+        for(Project project : projects){
+
+            if(i == 1) {
                 project.setProjectManager("ekki");
-                project.addTask(new Task("Huba's personal task", 1, 10, 100));
+                project.addTask(new Task("Implementation", 100, 5, 10));
+                project.addTask(new Task("Class diagrams", 100, 7, 12));
+                project.addTask(new Task("Animations", 100, 9, 14));
             }
+
+            if(i == 2) {
+                project.setProjectManager("huba");
+                project.addTask(new Task("Implementation", 100, 5, 10));
+                project.addTask(new Task("Class diagrams", 100, 7, 12));
+                project.addTask(new Task("Animations", 100, 9, 14));
+            }
+
+            if(i == 3) {
+                project.setProjectManager("aha");
+                project.addTask(new Task("Implementation", 100, 5, 10));
+                project.addTask(new Task("Class diagrams", 100, 7, 12));
+                project.addTask(new Task("Animations", 100, 9, 14));
+            }
+
+            int j = 1;
+            for(Task task : project.getTasks()){
+                if(j == 1) {
+                    task.assignWorker(getUser("huba"));
+                }
+
+                if(j == 2) {
+                    task.assignWorker(getUser("aha"));
+                }
+
+                if(j == 3) {
+                    task.assignWorker(getUser("ekki"));
+                }
+                j++;
+            }
+            i++;
         }
     }
     public boolean isLoggedIn(){
@@ -182,7 +210,7 @@ public class ProjectPlanningApp {
             }
             nextProject:
             for(Task task : project.getTasks()){
-                System.out.println(task.getAssignedWorkers());
+                //System.out.println(task.getAssignedWorkers());
                 for(User user : task.getAssignedWorkers()){
                     if(Objects.equals(user.getInitials(), currentUser.getInitials()) && !projectProcessed){
                         projectsView.add(project);

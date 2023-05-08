@@ -18,10 +18,17 @@ import javafx.stage.Stage;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.awt.Desktop;
 
 public class ApplicationMainController{
 
@@ -31,6 +38,7 @@ public class ApplicationMainController{
     private Task currentTask;
     private String userChoice;
     private boolean userSpecificGlobal;
+    private boolean addWorkerMode;
     private Parent root;
     private Stage stage;
     private Scene scene;
@@ -64,6 +72,8 @@ public class ApplicationMainController{
     @FXML
     private ChoiceBox<String> comboUsers;
     @FXML
+    private ChoiceBox<String> comboAddOrRemove;
+    @FXML
     private Label labelCurrentUser;
     @FXML
     private Label labelProjectName;
@@ -71,8 +81,8 @@ public class ApplicationMainController{
     private Label labelManagerAssigned;
     @FXML
     private Label labelTotalWorkers;
-    @FXML
-    private Label labelTask;
+    //@FXML
+    //private Label labelTask;
     @FXML
     private Label labelTasksCompleted;
     @FXML
@@ -95,20 +105,20 @@ public class ApplicationMainController{
     @FXML
     private Label labelCreateProjectStatus;
 
-    @FXML
-    private Label labelAddUser;
+    //@FXML
+    //private Label labelAddUser;
 
-    @FXML
-    private Label labelUserSelected;
+    //@FXML
+    //private Label labelUserSelected;
 
     @FXML
     private Label labelCreateNewTask;
 
-    @FXML
-    private Label labelCreateTaskTitle;
+    //@FXML
+    //private Label labelCreateTaskTitle;
 
-    @FXML
-    private Label labelCreateTaskStartWeek;
+    //@FXML
+    //private Label labelCreateTaskStartWeek;
 
     @FXML
     private Label labelCreateTaskEndWeek;
@@ -121,17 +131,26 @@ public class ApplicationMainController{
     private Button buttonBecomeManager;
     @FXML
     private Button buttonResign;
-    @FXML
-    private Button buttonLogHours;
+    //@FXML
+    //private Button buttonLogHours;
+
+    //@FXML
+    //private Button buttonCreateTask;
+
+    //@FXML
+    //private Button buttonUserToTask;
 
     @FXML
-    private Button buttonCreateTask;
-
+    private Button buttonAddWorker;
     @FXML
-    private Button buttonUserToTask;
+    private Button buttonRemoveWorker;
+
+    @FXML Button buttonDeleteTask;
 
     @FXML
     private Button buttonTaskComplete;
+    @FXML
+    private Button buttonGenerateReport;
     @FXML
     private GridPane gridPaneLogView;
     @FXML
@@ -161,6 +180,7 @@ public class ApplicationMainController{
             //System.out.println("Created new instance of ProjectPlanningApp!");
         }
         setDropDownView();
+        setDropDownAddRemove();
         numbersOnly();
     }
 
@@ -199,13 +219,53 @@ public class ApplicationMainController{
         });
     }
 
+    private void setDropDownAddRemove(){
+
+        ObservableList<String> choices = FXCollections.observableArrayList();
+
+        String[] choiceArray = {"Add worker", "Remove worker"};
+
+        choices.addAll(Arrays.asList(choiceArray));
+
+        comboAddOrRemove.setItems(choices);
+        comboAddOrRemove.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number number2) {
+                if((Integer) number2 >= 0) {
+                    String choice = comboAddOrRemove.getItems().get((Integer) number2);
+                    if(Objects.equals(choice, "Add worker")){
+                        buttonAddWorker.setVisible(true);
+                        buttonRemoveWorker.setVisible(false);
+                        addWorkerMode = true;
+                    } else if (Objects.equals(choice, "Remove worker")){
+                        buttonRemoveWorker.setVisible(true);
+                        buttonAddWorker.setVisible(false);
+                        addWorkerMode = false;
+                    }
+                    if(currentTask != null){
+                        setDropDownUsers(currentTask);
+                    }
+                }
+            }
+        });
+    }
+
+
     private void setDropDownUsers(Task task){
 
         ObservableList<String> choices = FXCollections.observableArrayList();
 
-        for(User user : projectPlanningApp.getUsers()) {
-            if(!task.isWorkerAssigned(user.getInitials())) {
-                choices.add(user.getInitials());
+        if(addWorkerMode) {
+            for (User user : projectPlanningApp.getUsers()) {
+                if (!task.isWorkerAssigned(user.getInitials())) {
+                    choices.add(user.getInitials());
+                }
+            }
+        } else {
+            for (User user : projectPlanningApp.getUsers()) {
+                if (task.isWorkerAssigned(user.getInitials())) {
+                    choices.add(user.getInitials());
+                }
             }
         }
 
@@ -276,19 +336,23 @@ public class ApplicationMainController{
             labelManagerAssigned.setText("Current project manager: " + project.getProjectManager());
             buttonBecomeManager.setVisible(false);
             showManagement(false);
+            buttonGenerateReport.setVisible(false);
             if(Objects.equals(projectPlanningApp.getCurrentUser().getInitials(), project.getProjectManager())){
                 labelManagerAssigned.setText("Current project manager: " + project.getProjectManager() + " (you)");
+                buttonGenerateReport.setVisible(true);
                 buttonResign.setVisible(true);
                 showManagement(true);
             } else {
                 buttonResign.setVisible(false);
                 showManagement(false);
+                buttonGenerateReport.setVisible(false);
             }
         } else {
             showManagement(true);
             labelManagerAssigned.setText("Current project manager: ");
             buttonBecomeManager.setVisible(true);
             buttonResign.setVisible(false);
+            buttonGenerateReport.setVisible(true);
         }
         updateTaskCompletion();
     }
@@ -312,9 +376,21 @@ public class ApplicationMainController{
         textFieldHours.setText("");
 
         labelCreateProjectStatus.setVisible(false);
+
+        resetTaskData();
+    }
+
+    public void resetTaskData(){
+        labelTaskTitle.setText("Title: ");
+        labelTaskStartWeek.setText("Start week: ");
+        labelTaskEndWeek.setText("End week: ");
+        labelTaskBudgettedHours.setText("Budgetted hours: ");
+        labelTaskCompleted.setText("Completion status: ");
+        buttonTaskComplete.setVisible(false);
     }
 
     public void displayTasks(Project project){
+        resetTaskData();
         listTasks.getItems().clear();
         listTasks.getSelectionModel().clearSelection();
         if(userSpecificGlobal){
@@ -361,6 +437,7 @@ public class ApplicationMainController{
         setDropDownUsers(task);
         String userInitials = projectPlanningApp.getCurrentUser().getInitials();
         buttonTaskComplete.setVisible(task.isWorkerAssigned(userInitials) || Objects.equals(currentProject.getProjectManager(), userInitials));
+        buttonDeleteTask.setVisible(!currentProject.getIsProjectManagerAssigned() || Objects.equals(currentProject.getProjectManager(), userInitials));
         labelLogSuccess.setVisible(false);
         textFieldHours.setText("");
         labelTaskTitle.setText("Title: " + task.getTitle());
@@ -383,10 +460,8 @@ public class ApplicationMainController{
     @FXML
     public void logout(ActionEvent event) throws IOException {
 
-        //Load login view and change scene to that
+        //Load login view, transfer data and change scene to that
         FXMLLoader loader = new FXMLLoader(getClass().getResource("login.fxml"));
-        //FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("login.fxml"));
-        //Scene scene = new Scene(fxmlLoader.load(), 600, 400);
         root = loader.load();
         ApplicationLoginController applicationLoginController = loader.getController();
         applicationLoginController.transferData(projectPlanningApp);
@@ -394,13 +469,6 @@ public class ApplicationMainController{
         scene = new Scene(root, 800, 400);
         stage.setScene(scene);
         stage.show();
-        /*
-        Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
-        stage.setTitle("Project planning tool");
-        stage.setScene(scene);
-        stage.show();
-        */
-
 
         projectPlanningApp.userLogout();
     }
@@ -479,8 +547,8 @@ public class ApplicationMainController{
     }
     @FXML
     public void numbersOnly(){
-        // https://stackoverflow.com/questions/7555564/what-is-the-recommended-way-to-make-a-numeric-textfield-in-javafx
-        // force the field to be numeric only
+        // Source: https://stackoverflow.com/questions/7555564/what-is-the-recommended-way-to-make-a-numeric-textfield-in-javafx
+        // force the fields to be numeric only
         textFieldHours.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue,
@@ -555,6 +623,13 @@ public class ApplicationMainController{
         }
     }
 
+    public void removeUserFromTask(ActionEvent actionEvent){
+        if(projectPlanningApp.userIsContainedInDatabase(userChoice)) {
+            currentTask.removeWorker(projectPlanningApp.getUser(userChoice));
+            setDropDownUsers(currentTask);
+        }
+    }
+
     public void createTask(ActionEvent actionEvent) throws InvalidOperationException{
         if(Objects.equals(textFieldTaskName.getText(), "")){
             labelCreateNewTask.setText("Please enter task name!");
@@ -589,6 +664,48 @@ public class ApplicationMainController{
 
 
         displayTasks(currentProject);
+    }
+
+    public void deleteTask() throws InvalidOperationException {
+        if(currentTask.isWorkerAssigned(projectPlanningApp.getCurrentUser().getInitials()) ||
+                Objects.equals(currentProject.getProjectManager(), projectPlanningApp.getCurrentUser().getInitials())) {
+            currentProject.removeTask(currentTask.getTitle());
+        }
+        currentTask = null;
+        buttonDeleteTask.setVisible(false);
+        updateTaskCompletion();
+        displayTasks(currentProject);
+    }
+
+    public void createReport(ActionEvent actionEvent){
+        // source: https://www.tutorialspoint.com/how-to-get-the-current-date-in-java
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/dd/MM HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        String timeAndDate = dtf.format(now);
+        System.out.println(timeAndDate + " - " + currentProject.getName());
+        System.out.println("----Overall status----");
+        System.out.println(labelTasksCompleted.getText());
+        System.out.println("----Tasks status----");
+        System.out.println(" ");
+        for(Task task : currentProject.getTasks()){
+            System.out.println("Task name: " + task.getTitle());
+            System.out.println("Start week: " + task.getStartWeek());
+            System.out.println("End week: " + task.getEndWeek());
+            System.out.println("Budgetted hours: " + task.getBudgetedHours());
+            if(task.getIsCompleted()){
+                System.out.println("Task complete");
+            } else {
+                System.out.println("Task incomplete");
+            }
+            System.out.println(" ");
+            System.out.println("Assigned workers:");
+            System.out.println(" ");
+            for(User user : task.getAssignedWorkers()) {
+                System.out.println(user.getInitials());
+            }
+            System.out.println("----------");
+        }
+
     }
 
     public void showManagement(Boolean state){
