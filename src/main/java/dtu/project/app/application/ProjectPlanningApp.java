@@ -31,14 +31,22 @@ public class ProjectPlanningApp {
             createNewProject("Test" + i);
         }
         for(Project project : projects){
-            for(int i = 0; i < 10; i++){
-                project.addTask(new Task("Task" + i, i*10, i, i+1));
-                if(i%2==0) {
-                    project.getTask("Task" + i).markCompleted();
-                    project.getTask("Task" + i).assignWorker(users.get(0));
+            for(int j = 0; j < 10; j++){
+                project.addTask(new Task("Task" + j, j*10, j, j+1));
+                if( j % 2 == 0) {
+                    project.getTask("Task" + j).complete();
+                    project.getTask("Task" + j).assignWorker(users.get(0));
                 }
             }
             project.setProjectManager("huba");
+        }
+        createNewProject("Ekki personal project");
+
+        for(Project project : projects) {
+            if(projectIsContainedInDatabase("Ekki personal project")){
+                project.setProjectManager("ekki");
+                project.addTask(new Task("Huba's personal task", 1, 10, 100));
+            }
         }
     }
     public boolean isLoggedIn(){
@@ -58,6 +66,18 @@ public class ProjectPlanningApp {
         loggedIn = false;
     }
 
+    public List<User> getUsers(){
+        return users;
+    }
+
+    public User getUser(String initials){
+        for(User user : users){
+            if(Objects.equals(initials, user.getInitials())){
+                return user;
+            }
+        }
+        return null;
+    }
     public void userLogout() {
         loggedIn = false;
     }
@@ -138,11 +158,18 @@ public class ProjectPlanningApp {
 
     public ObservableList<Project> getMyProjectsViewable(){
         ObservableList<Project> projectsView = FXCollections.observableArrayList();
-        nextProject:
+        boolean projectProcessed;
         for(Project project : projects){
+            projectProcessed = false;
+            if(Objects.equals(currentUser.getInitials(), project.getProjectManager())){
+                projectsView.add(project);
+                projectProcessed = true;
+            }
+            nextProject:
             for(Task task : project.getTasks()){
+                System.out.println(task.getAssignedWorkers());
                 for(User user : task.getAssignedWorkers()){
-                    if(Objects.equals(user.getInitials(), currentUser.getInitials())){
+                    if(Objects.equals(user.getInitials(), currentUser.getInitials()) && !projectProcessed){
                         projectsView.add(project);
                         break nextProject;
                     }

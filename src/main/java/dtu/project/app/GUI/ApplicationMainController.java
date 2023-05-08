@@ -18,6 +18,7 @@ import javafx.util.Callback;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public class ApplicationMainController{
@@ -26,6 +27,8 @@ public class ApplicationMainController{
 
     private Project currentProject;
     private Task currentTask;
+    private String userChoice;
+    private boolean userSpecificGlobal;
 
     public ApplicationMainController(){
         this.projectPlanningApp = new ProjectPlanningApp();
@@ -44,7 +47,21 @@ public class ApplicationMainController{
     private TextField textFieldProjectName;
 
     @FXML
-    private ChoiceBox<String> dropDown;
+    private TextField textFieldTaskName;
+
+    @FXML
+    private TextField textFieldTaskStartWeek;
+
+    @FXML
+    private TextField textFieldTaskEndWeek;
+
+    @FXML
+    private TextField textFieldTaskBudgettedHours;
+
+    @FXML
+    private ChoiceBox<String> comboViews;
+    @FXML
+    private ChoiceBox<String> comboUsers;
     @FXML
     private Label labelCurrentUser;
     @FXML
@@ -73,6 +90,30 @@ public class ApplicationMainController{
     private Label labelLogTaskName;
     @FXML
     private Label labelLogSuccess;
+
+    @FXML
+    private Label labelCreateProjectStatus;
+
+    @FXML
+    private Label labelAddUser;
+
+    @FXML
+    private Label labelUserSelected;
+
+    @FXML
+    private Label labelCreateNewTask;
+
+    @FXML
+    private Label labelCreateTaskTitle;
+
+    @FXML
+    private Label labelCreateTaskStartWeek;
+
+    @FXML
+    private Label labelCreateTaskEndWeek;
+
+    @FXML
+    private Label labelCreateBudgettedHours;
     @FXML
     private ProgressBar progressTasksCompleted;
     @FXML
@@ -81,10 +122,22 @@ public class ApplicationMainController{
     private Button buttonResign;
     @FXML
     private Button buttonLogHours;
+
+    @FXML
+    private Button buttonCreateTask;
+
+    @FXML
+    private Button buttonUserToTask;
+
+    @FXML
+    private Button buttonTaskComplete;
     @FXML
     private GridPane gridPaneLogView;
     @FXML
     private GridPane gridPaneProjectView;
+
+    @FXML
+    private GridPane gridPaneManagement;
 
     public void displayCurrentUser(String username) {
         labelCurrentUser.setText("Hello " + username);
@@ -99,11 +152,11 @@ public class ApplicationMainController{
     }
     public void initializeData(){
 
-        setDropDown();
+        setDropDownView();
         numbersOnly();
     }
 
-    private void setDropDown(){
+    private void setDropDownView(){
 
         ObservableList<String> choices = FXCollections.observableArrayList();
 
@@ -111,22 +164,25 @@ public class ApplicationMainController{
 
         choices.addAll(Arrays.asList(choiceArray));
 
-        dropDown.setItems(choices);
-        dropDown.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+        comboViews.setItems(choices);
+        comboViews.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number number, Number number2) {
                 if((Integer) number2 >= 0) {
-                    String choice = dropDown.getItems().get((Integer) number2);
+                    String choice = comboViews.getItems().get((Integer) number2);
                     if(Objects.equals(choice, "All projects")){
-                        displayProjects(projectPlanningApp.getAllProjectsViewable(), false);
+                        userSpecificGlobal = false;
+                        displayProjects(projectPlanningApp.getAllProjectsViewable());
                         showProjectView(true);
                         resetData();
                     } else if (Objects.equals(choice, "My projects")){
-                        displayProjects(projectPlanningApp.getMyProjectsViewable(), true);
+                        userSpecificGlobal = true;
+                        displayProjects(projectPlanningApp.getMyProjectsViewable());
                         showProjectView(true);
                         resetData();
                     } else if (Objects.equals(choice, "Log hours")){
-                        displayProjects(projectPlanningApp.getAllProjectsViewable(), false);
+                        userSpecificGlobal = false;
+                        displayProjects(projectPlanningApp.getAllProjectsViewable());
                         showProjectView(false);
                         resetData();
                     }
@@ -135,8 +191,33 @@ public class ApplicationMainController{
         });
     }
 
+    private void setDropDownUsers(Task task){
+
+        ObservableList<String> choices = FXCollections.observableArrayList();
+
+        for(User user : projectPlanningApp.getUsers()) {
+            if(!task.isWorkerAssigned(user.getInitials())) {
+                choices.add(user.getInitials());
+            }
+        }
+
+        if(choices.isEmpty()){
+            choices.add("No users available!");
+        }
+
+        comboUsers.setItems(choices);
+        comboUsers.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number number2) {
+                if((Integer) number2 >= 0) {
+                    userChoice = comboUsers.getItems().get((Integer) number2);
+                }
+            }
+        });
+    }
+
     @FXML
-    private void displayProjects(ObservableList<Project> observableProjectList, Boolean userSpecific){
+    private void displayProjects(ObservableList<Project> observableProjectList){
 
         listProjects.getItems().clear();
         listProjects.getSelectionModel().clearSelection();
@@ -168,8 +249,9 @@ public class ApplicationMainController{
                     public void changed(ObservableValue<? extends Project> ov,
                                         Project oldValue, Project newValue) {
                         if(newValue != null) {
+                            resetData();
                             displayCurrentProject(newValue);
-                            displayTasks(newValue, userSpecific);
+                            displayTasks(newValue);
                         }
                     }
                 });
@@ -178,30 +260,29 @@ public class ApplicationMainController{
     @FXML
     private void displayCurrentProject(Project project){
         currentProject = project;
+        currentTask = null;
         labelProjectName.setText("Project name: " + project.getName());
         labelLogProjectName.setText("Project name: " + project.getName());
 
         if(project.getIsProjectManagerAssigned()) {
             labelManagerAssigned.setText("Current project manager: " + project.getProjectManager());
             buttonBecomeManager.setVisible(false);
+            showManagement(false);
             if(Objects.equals(projectPlanningApp.getCurrentUser().getInitials(), project.getProjectManager())){
                 labelManagerAssigned.setText("Current project manager: " + project.getProjectManager() + " (you)");
                 buttonResign.setVisible(true);
+                showManagement(true);
             } else {
                 buttonResign.setVisible(false);
+                showManagement(false);
             }
         } else {
+            showManagement(true);
             labelManagerAssigned.setText("Current project manager: ");
             buttonBecomeManager.setVisible(true);
             buttonResign.setVisible(false);
         }
-        labelTotalWorkers.setText("Total workers assigned: " + project.getWorkerAmount());
-        labelTasksCompleted.setText("Tasks completed: " +
-                project.getTasksCompleted() +
-                " / " +
-                project.getTaskAmount());
-        double progress = (double) project.getTasksCompleted()/(double) project.getTaskAmount();
-        progressTasksCompleted.setProgress(progress);
+        updateTaskCompletion();
     }
 
     @FXML
@@ -220,12 +301,15 @@ public class ApplicationMainController{
         labelLogProjectName.setText("Project name: ");
         labelLogTaskName.setText("Task name: ");
         labelLogSuccess.setVisible(false);
+        textFieldHours.setText("");
+
+        labelCreateProjectStatus.setVisible(false);
     }
 
-    public void displayTasks(Project project, Boolean userSpecific){
+    public void displayTasks(Project project){
         listTasks.getItems().clear();
         listTasks.getSelectionModel().clearSelection();
-        if(userSpecific){
+        if(userSpecificGlobal){
             listTasks.setItems(project.getMyTasksViewable(projectPlanningApp.getCurrentUser()));
         } else {
             listTasks.setItems(project.getAllTasksViewable());
@@ -265,6 +349,11 @@ public class ApplicationMainController{
     @FXML
     public void displayCurrentTask(Task task){
         currentTask = task;
+        setDropDownUsers(task);
+        String userInitials = projectPlanningApp.getCurrentUser().getInitials();
+        buttonTaskComplete.setVisible(task.isWorkerAssigned(userInitials) || Objects.equals(currentProject.getProjectManager(), userInitials));
+        labelLogSuccess.setVisible(false);
+        textFieldHours.setText("");
         labelTaskTitle.setText("Title: " + task.getTitle());
         labelTaskStartWeek.setText("Start week: " + task.getStartWeek());
         labelTaskEndWeek.setText("End week: " + task.getEndWeek());
@@ -272,8 +361,10 @@ public class ApplicationMainController{
         String completed;
         if(task.getIsCompleted()){
             completed = "Complete";
+            buttonTaskComplete.setText("Mark as incomplete");
         } else {
             completed = "Incomplete";
+            buttonTaskComplete.setText("Mark as complete");
         }
         labelTaskCompleted.setText("Completion status : " + completed);
 
@@ -309,9 +400,29 @@ public class ApplicationMainController{
     @FXML
     public void createNewProject(ActionEvent actionevent){
         String projectName = textFieldProjectName.getText();
-        if(!projectPlanningApp.projectIsContainedInDatabase(projectName)) {
-            projectPlanningApp.createNewProject(projectName);
-            displayProjects(projectPlanningApp.getAllProjectsViewable(), false);
+        if(Objects.equals(projectName, "")){
+            labelCreateProjectStatus.setVisible(true);
+            labelCreateProjectStatus.setText("Please enter a name for the project!");
+            return;
+        }
+
+        if(projectPlanningApp.projectIsContainedInDatabase(projectName)){
+            labelCreateProjectStatus.setVisible(true);
+            labelCreateProjectStatus.setText("Project with that name already exists!");
+            return;
+        }
+
+        projectPlanningApp.createNewProject(projectName);
+
+        if(projectPlanningApp.projectIsContainedInDatabase(projectName)){
+            userSpecificGlobal = false;
+            displayProjects(projectPlanningApp.getAllProjectsViewable());
+            textFieldProjectName.setText("");
+            labelCreateProjectStatus.setVisible(true);
+            labelCreateProjectStatus.setText("Project created successfully");
+        } else {
+            labelCreateProjectStatus.setVisible(true);
+            labelCreateProjectStatus.setText("Something went wrong! try again later");
         }
     }
 
@@ -322,8 +433,28 @@ public class ApplicationMainController{
     }
 
     public void logHours(){
-        if(currentTask != null && currentProject != null && textFieldHours.getText() != null){
-            //projectPlanningApp.getCurrentUser().logHours(currentProject.getName(), currentTask.getTitle(), textFieldHours.getText());
+
+        if(currentTask == null){
+            labelLogSuccess.setVisible(true);
+            labelLogSuccess.setText("Please choose a task!");
+            return;
+        }
+
+        if(Objects.equals(textFieldHours.getText(), "")){
+            labelLogSuccess.setVisible(true);
+            labelLogSuccess.setText("Please input correct amount of hours!");
+            return;
+        }
+
+        if(currentTask != null && currentProject != null && !Objects.equals(textFieldHours.getText(), "")){
+            projectPlanningApp.getCurrentUser().addLogHours(currentProject.getName(), currentTask.getTitle(), Integer.parseInt(textFieldHours.getText()));
+            labelLogSuccess.setVisible(true);
+            if(projectPlanningApp.getCurrentUser().getLoggedHours(currentProject.getName(), currentTask.getTitle(), Integer.parseInt(textFieldHours.getText()))){
+                labelLogSuccess.setText("Hours logged successfully!");
+            } else {
+                labelLogSuccess.setText("Something went wrong! Try again later");
+            }
+            textFieldHours.setText("");
         }
     }
     @FXML
@@ -339,24 +470,120 @@ public class ApplicationMainController{
                 }
             }
         });
-    }
-    /*
-    @FXML
-    public void showProjectView(Boolean state){
-        labelProjectName.setVisible(state);
-        labelManagerAssigned.setVisible(state);
-        buttonBecomeManager.setVisible(state);
-        buttonResign.setVisible(state);
-        labelTotalWorkers.setVisible(state);
-        labelTasksCompleted.setVisible(state);
-        progressTasksCompleted.setVisible(!state);
-        labelTask.setVisible(state);
-        labelTaskTitle.setVisible(state);
-        labelTaskStartWeek.setVisible(state);
-        labelTaskEndWeek.setVisible(state);
-        labelTaskBudgettedHours.setVisible(state);
-        labelTaskCompleted.setVisible(state);
-    }
-    */
 
+        textFieldTaskStartWeek.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue,
+                                String newValue) {
+                if (!newValue.matches("\\d*")) {
+                    textFieldTaskStartWeek.setText(newValue.replaceAll("[^\\d]", ""));
+                }
+            }
+        });
+
+        labelCreateTaskEndWeek.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue,
+                                String newValue) {
+                if (!newValue.matches("\\d*")) {
+                    labelCreateTaskEndWeek.setText(newValue.replaceAll("[^\\d]", ""));
+                }
+            }
+        });
+
+        labelCreateBudgettedHours.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue,
+                                String newValue) {
+                if (!newValue.matches("\\d*")) {
+                    labelCreateBudgettedHours.setText(newValue.replaceAll("[^\\d]", ""));
+                }
+            }
+        });
+    }
+
+    @FXML
+    public void clearProjectName(){
+        labelCreateProjectStatus.setVisible(false);
+    }
+
+    @FXML
+    public void completeTask(ActionEvent actionEvent){
+        if(!currentTask.getIsCompleted()) {
+            currentTask.complete();
+        } else {
+            currentTask.incomplete();
+        }
+        updateTaskCompletion();
+        displayCurrentTask(currentTask);
+    }
+
+    @FXML
+    public void updateTaskCompletion(){
+        labelTasksCompleted.setText("Tasks completed: " +
+                currentProject.getTasksCompleted() +
+                " / " +
+                currentProject.getTaskAmount());
+        double progress = (double) currentProject.getTasksCompleted()/(double) currentProject.getTaskAmount();
+        progressTasksCompleted.setProgress(progress);
+    }
+
+    public void addUserToTask(ActionEvent actionEvent){
+        if(projectPlanningApp.userIsContainedInDatabase(userChoice)) {
+            currentTask.assignWorker(projectPlanningApp.getUser(userChoice));
+            setDropDownUsers(currentTask);
+        }
+    }
+
+    public void createTask(ActionEvent actionEvent){
+        if(Objects.equals(textFieldTaskName.getText(), "")){
+            labelCreateNewTask.setText("Please enter task name!");
+            return;
+        }
+
+        if(Objects.equals(textFieldTaskStartWeek.getText(), "")){
+            labelCreateNewTask.setText("Please enter start week!");
+            return;
+        }
+
+        if(Objects.equals(textFieldTaskEndWeek.getText(), "")){
+            labelCreateNewTask.setText("Please enter end week!");
+            return;
+        }
+
+        if(Objects.equals(textFieldTaskBudgettedHours.getText(), "")){
+            labelCreateNewTask.setText("Please enter budgetted hours!");
+            return;
+        }
+
+        currentProject.addTask(new Task(textFieldTaskName.getText(),
+                Integer.parseInt(textFieldTaskStartWeek.getText()),
+                Integer.parseInt(textFieldTaskEndWeek.getText()),
+                Integer.parseInt(textFieldTaskBudgettedHours.getText())));
+        labelCreateNewTask.setText("Task created successfully!");
+
+        displayTasks(currentProject);
+    }
+
+    public void showManagement(Boolean state){
+
+        gridPaneManagement.setVisible(state);
+        /*
+        labelAddUser.setVisible(!state);
+        labelUserSelected.setVisible(state);
+        labelCreateNewTask.setVisible(state);
+        labelCreateTaskTitle.setVisible(state);
+        labelCreateTaskStartWeek.setVisible(state);
+        labelCreateTaskEndWeek.setVisible(state);
+        labelCreateBudgettedHours.setVisible(state);
+        comboUsers.setVisible(state);
+        textFieldTaskName.setVisible(state);
+        textFieldTaskStartWeek.setVisible(state);
+        textFieldTaskEndWeek.setVisible(state);
+        textFieldTaskBudgettedHours.setVisible(state);
+        buttonCreateTask.setVisible(state);
+        buttonUserToTask.setVisible(state);
+        */
+
+    }
 }

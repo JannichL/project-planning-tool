@@ -9,8 +9,6 @@ public class Project {
 
     private String projectId;
     private String title;
-
-    private ArrayList<User> assignedWorkers;
     private ArrayList<Task> tasks;
     private String projectManager;
     private boolean isProjectManagerAssigned;
@@ -18,7 +16,6 @@ public class Project {
 
     public Project(String title) {
         this.title = title;
-        this.assignedWorkers = new ArrayList<>();
         this.tasks = new ArrayList<>();
         this.projectManager = null;
         this.isProjectManagerAssigned = false;
@@ -31,18 +28,6 @@ public class Project {
 
     public void setProjectId(String ID){
         this.projectId = ID;
-    }
-
-    public ArrayList<User> getAssignedWorkers() {
-        return assignedWorkers;
-    }
-
-    public void addAssignedWorker(User worker) {
-        assignedWorkers.add(worker);
-    }
-
-    public void removeAssignedWorker(User worker) {
-        assignedWorkers.remove(worker);
     }
 
     public ArrayList<Task> getTasks() {
@@ -123,12 +108,18 @@ public class Project {
 
     public ObservableList<Task> getMyTasksViewable(User currentUser){
         ObservableList<Task> taskView = FXCollections.observableArrayList();
-        nextProject:
+        boolean taskProcessed;
             for(Task task : tasks){
+                taskProcessed = false;
+                if(Objects.equals(currentUser.getInitials(), projectManager)){
+                    taskView.add(task);
+                    taskProcessed = true;
+                }
+                nextTask:
                 for(User user : task.getAssignedWorkers()){
-                    if(Objects.equals(user.getInitials(), currentUser.getInitials())){
+                    if(Objects.equals(user.getInitials(), currentUser.getInitials()) && !taskProcessed){
                         taskView.add(task);
-                        break nextProject;
+                        break nextTask;
                     }
                 }
             }

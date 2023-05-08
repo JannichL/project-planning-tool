@@ -36,7 +36,7 @@ public class ApplicationLoginController {
         applicationMainController.displayCurrentUser(username);
         applicationMainController.initializeData();
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
+        scene = new Scene(root, 800, 400);
         stage.setScene(scene);
         stage.show();
     }
