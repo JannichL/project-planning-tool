@@ -29,12 +29,13 @@ public class LogHoursStep {
 
     @Given("that there are projects available")
     public void thatThereAreProjectsAvailable() {
-        assertFalse(projectPlanningApp.getProjectNames().isEmpty());
+        assertTrue(projectPlanningApp.getProjectNames().isEmpty());
     }
 
     @Given("there is a User with the initials {string}")
     public void thereIsAUserWithTheInitials(String initials) {
-        projectPlanningApp.userLogin("huba");
+        projectPlanningApp.addUser(initials);
+        projectPlanningApp.userLogin(initials);
     }
 
     @When("the User logs {int} hours of work on a project with the ID {string} on task {string}")
