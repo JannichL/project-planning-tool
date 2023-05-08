@@ -14,5 +14,5 @@ Scenario: Viewing available projects
   Then "Project1", "Project2", "Project3" and "Project4" are shown
 
 Scenario: No available projects
-Given that there are no projects available for "huba"
+Given that there are no projects available for "aha"
 Then no projects will be shown
