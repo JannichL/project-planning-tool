@@ -9,17 +9,13 @@ public class Project {
 
     private String projectId;
     private String title;
-
-    private ArrayList<User> assignedWorkers;
     private ArrayList<Task> tasks;
-    private ObservableList<Task> tasksView = FXCollections.observableArrayList();
     private String projectManager;
     private boolean isProjectManagerAssigned;
     private boolean isCompleted;
 
     public Project(String title) {
         this.title = title;
-        this.assignedWorkers = new ArrayList<>();
         this.tasks = new ArrayList<>();
         this.projectManager = null;
         this.isProjectManagerAssigned = false;
@@ -32,18 +28,6 @@ public class Project {
 
     public void setProjectId(String ID){
         this.projectId = ID;
-    }
-
-    public ArrayList<User> getAssignedWorkers() {
-        return assignedWorkers;
-    }
-
-    public void addAssignedWorker(User worker) {
-        assignedWorkers.add(worker);
-    }
-
-    public void removeAssignedWorker(User worker) {
-        assignedWorkers.remove(worker);
     }
 
     public ArrayList<Task> getTasks() {
@@ -92,13 +76,19 @@ public class Project {
         this.isCompleted = true;
     }
 
+    //PLEASE REDO THIS FUNCTION!
     public int getWorkerAmount() {
-            return assignedWorkers.size();
+        int workerAmount = 0;
+         for(Task task : tasks) {
+             workerAmount += task.getWorkerAmount();
+         }
+         return  workerAmount;
     }
 
     public int getTaskAmount() {
         return tasks.size();
     }
+    public String getProjectId(){return projectId;}
 
     public int getTasksCompleted() {
         int completed = 0;
@@ -111,7 +101,28 @@ public class Project {
     }
 
     public ObservableList<Task> getAllTasksViewable(){
+        ObservableList<Task> tasksView = FXCollections.observableArrayList();
         tasksView.addAll(tasks);
         return tasksView;
+    }
+
+    public ObservableList<Task> getMyTasksViewable(User currentUser){
+        ObservableList<Task> taskView = FXCollections.observableArrayList();
+        boolean taskProcessed;
+            for(Task task : tasks){
+                taskProcessed = false;
+                if(Objects.equals(currentUser.getInitials(), projectManager)){
+                    taskView.add(task);
+                    taskProcessed = true;
+                }
+                nextTask:
+                for(User user : task.getAssignedWorkers()){
+                    if(Objects.equals(user.getInitials(), currentUser.getInitials()) && !taskProcessed){
+                        taskView.add(task);
+                        break nextTask;
+                    }
+                }
+            }
+        return taskView;
     }
 }

@@ -2,6 +2,7 @@ package dtu.project.app.objects;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Task {
 
@@ -16,7 +17,6 @@ public class Task {
     private Project project; // Project that the task belongs to
 
     public Task(String title, int budgetedHours, int startWeek, int endWeek){
-
 
         this.id = id;
         this.title = title;
@@ -54,6 +54,16 @@ public class Task {
     public List<User> getAssignedWorkers() {
         return assignedWorkers;
     }
+    public boolean isWorkerAssigned(String name){
+        for(User user : assignedWorkers){
+            if(Objects.equals(name, user.getInitials())){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public int getWorkerAmount(){ return assignedWorkers.size();}
 
     public boolean getIsCompleted() {
         return isCompleted;
@@ -63,8 +73,12 @@ public class Task {
         assignedWorkers.add(worker);
     }
 
-    public void markCompleted() {
+    public void complete() {
         isCompleted = true;
+    }
+
+    public void incomplete() {
+        isCompleted = false;
     }
 
     public Project getProject() {

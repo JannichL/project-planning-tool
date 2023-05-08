@@ -29,21 +29,27 @@ public class ProjectPlanningApp {
         users.add(new User("huba"));
         users.add(new User("aha"));
         users.add(new User("ekki"));
-        Project project1 = new Project("Test1");
-        project1.addTask(new Task("Task1", 1, 1, 2));
-        project1.addTask(new Task("Task2", 1, 1, 2));
-        project1.addTask(new Task("Task3", 1, 1, 2));
-        project1.getTask("Task1").markCompleted();
-        project1.getTask("Task2").markCompleted();
-        project1.setProjectManager("ekki");
-        Project project2 = new Project("Test2");
-        project2.addTask(new Task("Task1", 1, 1, 2));
-        project2.addTask(new Task("Task2", 1, 1, 2));
-        project2.addTask(new Task("Task3", 1, 1, 2));
-        project2.getTask("Task1").markCompleted();
-        project2.setProjectManager("huba");
-        projects.add(project1);
-        projects.add(project2);
+        for(int i = 0; i < 10; i++){
+            createNewProject("Test" + i);
+        }
+        for(Project project : projects){
+            for(int j = 0; j < 10; j++){
+                project.addTask(new Task("Task" + j, j*10, j, j+1));
+                if( j % 2 == 0) {
+                    project.getTask("Task" + j).complete();
+                    project.getTask("Task" + j).assignWorker(users.get(0));
+                }
+            }
+            project.setProjectManager("huba");
+        }
+        createNewProject("Ekki personal project");
+
+        for(Project project : projects) {
+            if(projectIsContainedInDatabase("Ekki personal project")){
+                project.setProjectManager("ekki");
+                project.addTask(new Task("Huba's personal task", 1, 10, 100));
+            }
+        }
     }
     public boolean isLoggedIn(){
         return loggedIn;
@@ -62,6 +68,18 @@ public class ProjectPlanningApp {
         loggedIn = false;
     }
 
+    public List<User> getUsers(){
+        return users;
+    }
+
+    public User getUser(String initials){
+        for(User user : users){
+            if(Objects.equals(initials, user.getInitials())){
+                return user;
+            }
+        }
+        return null;
+    }
     public void userLogout() {
         loggedIn = false;
     }
@@ -117,6 +135,7 @@ public class ProjectPlanningApp {
         return false;
     }
 
+
     public List<String> getProjectNames() {
         List<String> projectNames = new ArrayList<>();
         for (Project project : projects) {
@@ -135,8 +154,31 @@ public class ProjectPlanningApp {
     }
 
     public ObservableList<Project> getAllProjectsViewable(){
+        ObservableList<Project> projectsView = FXCollections.observableArrayList();
         projectsView.addAll(projects);
         return projectsView;
     }
 
+    public ObservableList<Project> getMyProjectsViewable(){
+        ObservableList<Project> projectsView = FXCollections.observableArrayList();
+        boolean projectProcessed;
+        for(Project project : projects){
+            projectProcessed = false;
+            if(Objects.equals(currentUser.getInitials(), project.getProjectManager())){
+                projectsView.add(project);
+                projectProcessed = true;
+            }
+            nextProject:
+            for(Task task : project.getTasks()){
+                System.out.println(task.getAssignedWorkers());
+                for(User user : task.getAssignedWorkers()){
+                    if(Objects.equals(user.getInitials(), currentUser.getInitials()) && !projectProcessed){
+                        projectsView.add(project);
+                        break nextProject;
+                    }
+                }
+            }
+        }
+        return projectsView;
+    }
 }

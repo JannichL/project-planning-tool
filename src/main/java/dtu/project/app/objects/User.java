@@ -35,6 +35,10 @@ public class User {
         return false;
     }
 
+    public List<String[]> getAllLoggedHours() {
+        return loggedHours;
+    }
+
     public String getInitials() {
         return initials;
     }

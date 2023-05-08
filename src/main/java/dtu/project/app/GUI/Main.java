@@ -19,7 +19,7 @@ public class Main extends Application {
 
         try{
             Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
-            Scene scene = new Scene(root);
+            Scene scene = new Scene(root, 600, 400);
             stage.setScene(scene);
             stage.show();
         } catch(Exception e) {
