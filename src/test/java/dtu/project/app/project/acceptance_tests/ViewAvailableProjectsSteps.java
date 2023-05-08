@@ -11,8 +11,8 @@ import io.cucumber.java.en.When;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.Assert.*;
 
 
 public class ViewAvailableProjectsSteps {
@@ -23,29 +23,44 @@ public class ViewAvailableProjectsSteps {
     }
 
     @Given("projects with these names are contained in the database")
-    public void projectsWithTheseNamesAreContainedInTheDatabase(List<String> names) {
-        names = projectPlanningApp.getProjectNames();
-        for (String name : names) {
-            projectPlanningApp.projectIsContainedInDatabase(name);
+    public void projectsWithTheseNamesAreContainedInTheDatabase(List<String> project) {
+        for (String name : project) {
+            projectPlanningApp.createNewProject(name);
+        }
+        projectPlanningApp.getAllProjectsViewable();
+        for (String name1 : project) {
+            assertTrue(projectPlanningApp.projectIsContainedInDatabase(name1));
         }
     }
 
-    @Then("“Project1”, “Project2”, “Project3” and “Project4” are shown")
-    public void projectsAreShown() {
-        List<String> expectedProjectNames = Arrays.asList("Project1", "Project2", "Project3", "Project4");
-        List<String> actualProjectNames = projectPlanningApp.getProjectNames();
+    @Given("there are available projects for {string}")
+    public void availableProjects(String initials){
+        projectPlanningApp.addUser(initials);
+        projectPlanningApp.userLogin(initials);
+        assertNotNull(projectPlanningApp.getMyProjectsViewable());
     }
 
-    @Given("that there are no projects available")
-    public void thatThereAreNoProjectsAvailable() {
-        List<String> projectNames = projectPlanningApp.getProjectNames();
-        if (projectNames.isEmpty())
-            System.out.println("No projects are currently in the database");
+    @Then("{string}, {string}, {string} and {string} are shown")
+    public void projectsAreShown(String name1, String name2, String name3, String name4) {
+        projectPlanningApp.getProject(name1);
+        projectPlanningApp.getProject(name2);
+        projectPlanningApp.getProject(name3);
+        projectPlanningApp.getProject(name4);
+        assertTrue(projectPlanningApp.projectIsContainedInDatabase(name1));
+        assertTrue(projectPlanningApp.projectIsContainedInDatabase(name2));
+        assertTrue(projectPlanningApp.projectIsContainedInDatabase(name3));
+        assertTrue(projectPlanningApp.projectIsContainedInDatabase(name4));
+    }
+
+    @Given("that there are no projects available for {string}")
+    public void thatThereAreNoProjectsAvailable(String initials) {
+        projectPlanningApp.addUser(initials);
+        projectPlanningApp.userLogin(initials);
+        assertTrue(projectPlanningApp.getMyProjectsViewable().isEmpty());
     }
 
     @Then("no projects will be shown")
     public void noProjectsWillBeShown() {
-        assertTrue(projectPlanningApp.getAllProjectsViewable().isEmpty());
+        assertTrue(projectPlanningApp.getMyProjectsViewable().isEmpty());
     }
-
 }
