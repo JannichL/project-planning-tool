@@ -8,20 +8,18 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CreateTaskSteps {
+public class CreateDeleteTaskSteps {
 
     private ProjectPlanningApp projectPlanningApp;
     private Project project;
     private Task task;
-    private ErrorMessageHolder errorMessage;
-    public CreateTaskSteps(ProjectPlanningApp projectPlanningApp){
+    private ErrorMessageHolder errorMessage = new ErrorMessageHolder();
+    public CreateDeleteTaskSteps(ProjectPlanningApp projectPlanningApp){
         this.projectPlanningApp = projectPlanningApp;
     }
 
@@ -61,21 +59,17 @@ public class CreateTaskSteps {
 
     @When("the task is added to the project")
     public void AddTask(){
-        /*
+
         if(project.getIsProjectManagerAssigned() && !Objects.equals(projectPlanningApp.getCurrentUser().getInitials(), project.getProjectManager())){
             InvalidOperationException e = new InvalidOperationException("Only the project manager can add tasks!");
             errorMessage.setErrorMessage(e.getMessage());
             return;
         }
 
-         */
-
         try {
-            System.out.println("Trying to add project!");
             project.addTask(task);
         } catch (InvalidOperationException e) {
             errorMessage.setErrorMessage(e.getMessage());
-            System.out.println("Caught error!");
         }
     }
 
@@ -111,17 +105,39 @@ public class CreateTaskSteps {
         project.addTask(task);
         assertSame(task.getTitle(), project.getTask(task.getTitle()).getTitle());
     }
-    /*
-    @When("the User creates a task with title {string}, budgetedHours {int}, startWeek {int}, and endWeek {int}")
-    public void theUserCreatesATaskWithTitleBudgetedHoursStartWeekAndEndWeek(String title, Integer budgetedHours, Integer startWeek, Integer endWeek) {
-        task = (new Task(title, startWeek, endWeek, budgetedHours));
-        assertNotNull(task);
-    }
-
-     */
 
     @Then("the error message {string} is given")
     public void alreadyExistsCreateTask(String error){
         assertEquals(error, this.errorMessage.getErrorMessage());
+    }
+    @When("the User tries to delete task called {string}")
+    public void theUserTriesToDeleteTaskCalled(String string) {
+        if(project.getIsProjectManagerAssigned() && !Objects.equals(projectPlanningApp.getCurrentUser().getInitials(), project.getProjectManager())){
+            InvalidOperationException e = new InvalidOperationException("Only the project manager can delete tasks!");
+            errorMessage.setErrorMessage(e.getMessage());
+            return;
+        }
+
+        try{
+            project.removeTask(string);
+        } catch(InvalidOperationException e) {
+            errorMessage.setErrorMessage(e.getMessage());
+        }
+    }
+    @Then("the task with title {string} is not contained in the project")
+    public void theTaskWithTitleIsNotContainedInTheProject(String string) {
+        assertNull(project.getTask(string));
+    }
+    @Given("the Project has a task called {string}, budgetedHours {int}, startWeek {int}, and endWeek {int}")
+    public void theProjectHasATaskCalledBudgetedHoursStartWeekAndEndWeek(String title, Integer budgetedHours, Integer startWeek, Integer endWeek) throws InvalidOperationException {
+        project.addTask(new Task(title, startWeek, endWeek, budgetedHours));
+    }
+    @Given("the user has access to deleting tasks")
+    public void theUserHasAccessToDeletingTasks() {
+        assertTrue(Objects.equals(project.getProjectManager(), projectPlanningApp.getCurrentUser().getInitials()) || !project.getIsProjectManagerAssigned());
+    }
+    @Given("a task called {string} does not exist in the project")
+    public void aTaskCalledDoesNotExistInTheProject(String string) {
+        assertNull(project.getTask(string));
     }
 }

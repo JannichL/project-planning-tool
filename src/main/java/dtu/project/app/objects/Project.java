@@ -37,17 +37,24 @@ public class Project {
 
     public void addTask(Task task) throws InvalidOperationException {
         for(Task listTask : tasks){
-            System.out.println("Is " + task.getTitle() + " = " + listTask.getTitle() + "?");
+            //System.out.println("Is " + task.getTitle() + " = " + listTask.getTitle() + "?");
             if(Objects.equals(task.getTitle(), listTask.getTitle())){
-                System.out.println("Throwing error!");
+                //System.out.println("Throwing error!");
                 throw new InvalidOperationException("Task already exists!");
             }
         }
         tasks.add(task);
     }
 
-    public void removeTask(Task task) {
-        tasks.remove(task);
+    public void removeTask(String taskName) throws InvalidOperationException {
+
+        for(Task task : tasks){
+            if(Objects.equals(task.getTitle(), taskName)){
+                tasks.remove(task);
+                return;
+            }
+        }
+        throw new InvalidOperationException("Task does not exist!");
     }
 
     public String getProjectManager() {
