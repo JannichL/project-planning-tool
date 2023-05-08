@@ -37,7 +37,7 @@ public class LogHoursStepTest {
     public void testThatThereAreProjectsAvailable() {
         // create a new LogHoursStep instance and call the 'thatThereAreProjectsAvailable' method
         LogHoursStep step = new LogHoursStep(projectPlanningApp);
-        step.thatThereAreProjectsAvailable();
+        step.thereExistsAProjectWithTheName("Skyscraper");
 
         // assert that the project names list is not empty
         Assertions.assertFalse(projectPlanningApp.getProjectNames().isEmpty());
@@ -47,12 +47,12 @@ public class LogHoursStepTest {
     public void testTheUserLogsHoursOfWorkOnAProjectWithTheIDOnTask() {
 
         projectPlanningApp.createNewProject("Skyscraper");
-        projectPlanningApp.addUserToDatabase("deez");
+        projectPlanningApp.addUserToDatabase("jimbo");
 
         LogHoursStep step = new LogHoursStep(projectPlanningApp);
-        step.thereIsAUserWithTheInitials("deez");
+        step.thereIsAUserWithTheInitials("jimbo");
 
-        step.theUserLogsHoursOfWorkOnAProjectWithTheIDOnTask(1, "Skyscraper", "Design");
+        step.theUserLogsHoursOfWorkOnTaskInProjectWithTheName(1, "Skyscraper", "Design");
 
         Assertions.assertTrue(projectPlanningApp.getCurrentUser().getLoggedHours("Skyscraper", "Design", 2));
     }

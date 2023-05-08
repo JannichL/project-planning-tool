@@ -56,11 +56,11 @@ public class ViewAvailableProjectsSteps {
     public void thatThereAreNoProjectsAvailable(String initials) {
         projectPlanningApp.addUser(initials);
         projectPlanningApp.userLogin(initials);
-        assertTrue(projectPlanningApp.getMyProjectsViewable().isEmpty());
+        assertTrue(projectPlanningApp.getProjectNames().isEmpty());
     }
 
     @Then("no projects will be shown")
     public void noProjectsWillBeShown() {
-        assertTrue(projectPlanningApp.getMyProjectsViewable().isEmpty());
+        assertTrue(projectPlanningApp.getProjectNames().isEmpty());
     }
 }
