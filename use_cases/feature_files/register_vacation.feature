@@ -5,4 +5,4 @@ Feature: Registering vacation time
   Scenario: user registers vacation time
     Given the user selects the vacation time option
     When the user enters the vacation time details
-    Then its registered in the database
+    Then vacation is registered in the database

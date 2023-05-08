@@ -22,14 +22,14 @@ public class RegisterSickSteps {
         this.projectPlanningApp = projectPlanningApp;
     }
 
-    @Given("the user enters the sick time details")
-    public void theUserEntersTheSickTimeDetails(int days) {
-        user.addSickDays(days);
+    @Given("the user {string} enters the sick time details {int}")
+    public void theUserEntersTheSickTimeDetails(String initials, Integer days) {
+        projectPlanningApp.getUser(initials).addSickDays(days);
     }
 
-    @Then("its registered in the database")
-    public void itsRegisteredInTheDatabase() {
-        user.getSickDays();
+    @Then("{int} days are registered in the database to {string}")
+    public void itsRegisteredInTheDatabase(Integer days, String initials) {
+        projectPlanningApp.getUser(initials).getSickDays(days);
     }
 }
 

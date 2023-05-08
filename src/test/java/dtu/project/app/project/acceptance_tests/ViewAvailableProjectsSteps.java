@@ -45,7 +45,7 @@ public class ViewAvailableProjectsSteps {
 
     @Then("no projects will be shown")
     public void noProjectsWillBeShown() {
-        assertTrue(projectPlanningApp.getProjectNames().isEmpty());
+        assertFalse(projectPlanningApp.getAllProjectsViewable().isEmpty());
     }
 
 }

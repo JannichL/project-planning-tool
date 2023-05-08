@@ -21,13 +21,13 @@ public class RegisterVacationSteps {
         this.projectPlanningApp = projectPlanningApp;
     }
 
-    @Given("the user enters the vacation time details")
+    @Given("the user enters the vacation time details {int}")
     public void theUserEntersTheVacationTimeDetails(int days) {
         user.addVacationDays(days);
     }
 
-    @Then("its registered in the database")
-    public void itsRegisteredInTheDatabase() {
+    @Then("vacation is registered in the database")
+    public void VacationRegisteredInTheDatabase() {
         user.getVacationDays();
     }
 }

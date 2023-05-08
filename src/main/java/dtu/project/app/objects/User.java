@@ -59,11 +59,11 @@ public class User {
         }
     }
 
-    public void addSickDays(int days) {
+    public void addSickDays(Integer days) {
         sickDays.add(days);
     }
 
-    public List<Integer> getSickDays() {
+    public List<Integer> getSickDays(Integer days) {
         return sickDays;
     }
 
@@ -74,8 +74,6 @@ public class User {
     public List<Integer> getVacationDays() {
         return vacationDays;
     }
-
-
 
     public Boolean getIsAvailable(){
         return isAvailable;
