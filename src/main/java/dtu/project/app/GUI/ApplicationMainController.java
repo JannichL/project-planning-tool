@@ -1,5 +1,6 @@
 package dtu.project.app.GUI;
 
+import dtu.project.app.application.InvalidOperationException;
 import dtu.project.app.application.ProjectPlanningApp;
 import dtu.project.app.objects.*;
 import javafx.beans.value.ChangeListener;
@@ -10,6 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -23,16 +25,15 @@ import java.util.Objects;
 
 public class ApplicationMainController{
 
-    private final ProjectPlanningApp projectPlanningApp;
+    private ProjectPlanningApp projectPlanningApp;
 
     private Project currentProject;
     private Task currentTask;
     private String userChoice;
     private boolean userSpecificGlobal;
-
-    public ApplicationMainController(){
-        this.projectPlanningApp = new ProjectPlanningApp();
-    }
+    private Parent root;
+    private Stage stage;
+    private Scene scene;
 
     @FXML
     private ListView<Project> listProjects;
@@ -150,8 +151,15 @@ public class ApplicationMainController{
         }
         return false;
     }
-    public void initializeData(){
+    public void initializeData(ProjectPlanningApp projectPlanningAppData) throws InvalidOperationException{
 
+        if(projectPlanningAppData != null){
+            this.projectPlanningApp = projectPlanningAppData;
+            //System.out.println("Transferred data!");
+        } else {
+            this.projectPlanningApp = new ProjectPlanningApp();
+            //System.out.println("Created new instance of ProjectPlanningApp!");
+        }
         setDropDownView();
         numbersOnly();
     }
@@ -349,6 +357,7 @@ public class ApplicationMainController{
     @FXML
     public void displayCurrentTask(Task task){
         currentTask = task;
+        updateTaskCompletion();
         setDropDownUsers(task);
         String userInitials = projectPlanningApp.getCurrentUser().getInitials();
         buttonTaskComplete.setVisible(task.isWorkerAssigned(userInitials) || Objects.equals(currentProject.getProjectManager(), userInitials));
@@ -372,15 +381,26 @@ public class ApplicationMainController{
     }
 
     @FXML
-    public void logout(ActionEvent actionEvent) throws IOException {
+    public void logout(ActionEvent event) throws IOException {
 
         //Load login view and change scene to that
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("login.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 600, 400);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("login.fxml"));
+        //FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("login.fxml"));
+        //Scene scene = new Scene(fxmlLoader.load(), 600, 400);
+        root = loader.load();
+        ApplicationLoginController applicationLoginController = loader.getController();
+        applicationLoginController.transferData(projectPlanningApp);
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root, 800, 400);
+        stage.setScene(scene);
+        stage.show();
+        /*
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
         stage.setTitle("Project planning tool");
         stage.setScene(scene);
         stage.show();
+        */
+
 
         projectPlanningApp.userLogout();
     }
@@ -535,7 +555,7 @@ public class ApplicationMainController{
         }
     }
 
-    public void createTask(ActionEvent actionEvent){
+    public void createTask(ActionEvent actionEvent) throws InvalidOperationException{
         if(Objects.equals(textFieldTaskName.getText(), "")){
             labelCreateNewTask.setText("Please enter task name!");
             return;
@@ -556,11 +576,17 @@ public class ApplicationMainController{
             return;
         }
 
-        currentProject.addTask(new Task(textFieldTaskName.getText(),
-                Integer.parseInt(textFieldTaskStartWeek.getText()),
-                Integer.parseInt(textFieldTaskEndWeek.getText()),
-                Integer.parseInt(textFieldTaskBudgettedHours.getText())));
-        labelCreateNewTask.setText("Task created successfully!");
+        if(Integer.parseInt(textFieldTaskStartWeek.getText()) > Integer.parseInt(textFieldTaskEndWeek.getText())){
+            labelCreateNewTask.setText("End week must be greater than start week!");
+            return;
+        }
+
+            currentProject.addTask(new Task(textFieldTaskName.getText(),
+                    Integer.parseInt(textFieldTaskStartWeek.getText()),
+                    Integer.parseInt(textFieldTaskEndWeek.getText()),
+                    Integer.parseInt(textFieldTaskBudgettedHours.getText())));
+            labelCreateNewTask.setText("Task created successfully!");
+
 
         displayTasks(currentProject);
     }

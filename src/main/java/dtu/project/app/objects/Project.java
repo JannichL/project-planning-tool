@@ -1,4 +1,5 @@
 package dtu.project.app.objects;
+import dtu.project.app.application.InvalidOperationException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -34,7 +35,14 @@ public class Project {
         return tasks;
     }
 
-    public void addTask(Task task) {
+    public void addTask(Task task) throws InvalidOperationException {
+        for(Task listTask : tasks){
+            System.out.println("Is " + task.getTitle() + " = " + listTask.getTitle() + "?");
+            if(Objects.equals(task.getTitle(), listTask.getTitle())){
+                System.out.println("Throwing error!");
+                throw new InvalidOperationException("Task already exists!");
+            }
+        }
         tasks.add(task);
     }
 

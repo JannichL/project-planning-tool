@@ -21,12 +21,13 @@ public class ProjectPlanningApp {
 
     private boolean loggedIn = false;
 
-    public ProjectPlanningApp(){
+    public ProjectPlanningApp() throws InvalidOperationException{
 
+        //setTestData();
+    }
+
+    private void setTestData() throws InvalidOperationException{
         //Test data for UI testing
-        users.add(new User("huba"));
-        users.add(new User("aha"));
-        users.add(new User("ekki"));
         for(int i = 0; i < 10; i++){
             createNewProject("Test" + i);
         }
@@ -77,6 +78,10 @@ public class ProjectPlanningApp {
             }
         }
         return null;
+    }
+
+    public void addUser(String initials){
+        users.add(new User(initials));
     }
     public void userLogout() {
         loggedIn = false;
@@ -141,7 +146,14 @@ public class ProjectPlanningApp {
         return projectNames;
     }
 
-
+    public Project getProject(String projectName){
+        for(Project project : projects){
+            if(Objects.equals(project.getName(), projectName)){
+                return project;
+            }
+        }
+        return null;
+    }
     public void addUserToDatabase(String initials){
         users.add(new User(initials));
     }

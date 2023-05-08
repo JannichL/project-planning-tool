@@ -35,18 +35,15 @@ public class LogHoursStep {
     @Given("there is a User with the initials {string}")
     public void thereIsAUserWithTheInitials(String initials) {
         projectPlanningApp.userLogin("huba");
-        throw new io.cucumber.java.PendingException();
     }
 
     @When("the User logs {int} hours of work on a project with the ID {string} on task {string}")
     public void theUserLogsHoursOfWorkOnAProjectWithTheIDOnTask(Integer Hours, String ID, String Task) {
         projectPlanningApp.getCurrentUser().addLogHours(ID, Task, Hours);
-        throw new io.cucumber.java.PendingException();
     }
 
     @Then("the system will register their logged hours {string} and project ID {string} and Task {string}")
     public void theSystemWillRegisterTheirLoggedHoursAndProjectIDAndTask(Integer Hours, String ID, String Task) {
         assertTrue(projectPlanningApp.getCurrentUser().getLoggedHours(ID, Task, Hours));
-        throw new io.cucumber.java.PendingException();
     }
 }
