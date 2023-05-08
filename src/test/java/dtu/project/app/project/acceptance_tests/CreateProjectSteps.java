@@ -15,25 +15,30 @@ import static org.junit.Assert.assertTrue;
 
 public class CreateProjectSteps {
 
-    private ProjectPlanningApp projectPlanningApp;
+    private Project name;
 
+    private ProjectPlanningApp projectPlanningApp;
 
     public CreateProjectSteps(ProjectPlanningApp projectPlanningApp) {
         this.projectPlanningApp = projectPlanningApp;
     }
     @Given("these Projects are contained in the database")
-    public void projectsWithTheseNamesAreContainedInTheDatabase(List<String> names) {
-        names = projectPlanningApp.getProjectNames();
-        for (String name : names){
-            projectPlanningApp.projectIsContainedInDatabase(name);
+    public void projectsWithTheseNamesAreContainedInTheDatabase(List<String> project) {
+        for (String name : project) {
+            projectPlanningApp.createNewProject(name);
+        }
+        projectPlanningApp.getAllProjectsViewable();
+        for (String name1 : project) {
+            assertTrue(projectPlanningApp.projectIsContainedInDatabase(name1));
         }
     }
     @Given("a project with {string} name is not in the database")
     public void aProjectWithThatNameIsNotInTheDatabase(String projectName) {
-        assertFalse(projectPlanningApp.projectIsContainedInDatabase("Project5"));
+        assertFalse(projectPlanningApp.projectIsContainedInDatabase(projectName));
     }
     @When("the project {string} is created its stored in the database")
     public void theProjectIsStoredInTheDatabase(String Project5) {
         projectPlanningApp.createNewProject(Project5);
+        assertTrue(projectPlanningApp.projectIsContainedInDatabase(Project5));
     }
 }
