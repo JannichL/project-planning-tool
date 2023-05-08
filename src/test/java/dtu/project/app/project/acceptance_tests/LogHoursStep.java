@@ -42,7 +42,7 @@ public class LogHoursStep {
         projectPlanningApp.getCurrentUser().addLogHours(ID, Task, Hours);
     }
 
-    @Then("the system will register their logged hours {string} and project ID {string} and Task {string}")
+    @Then("the system will register their logged hours {int} and project ID {string} and Task {string}")
     public void theSystemWillRegisterTheirLoggedHoursAndProjectIDAndTask(Integer Hours, String ID, String Task) {
         assertTrue(projectPlanningApp.getCurrentUser().getLoggedHours(ID, Task, Hours));
     }

@@ -17,9 +17,6 @@ import static org.junit.Assert.assertTrue;
 
 public class ViewAvailableProjectsSteps {
 
-    private Project project;
-    private User user;
-
     private ProjectPlanningApp projectPlanningApp;
     public ViewAvailableProjectsSteps(ProjectPlanningApp projectPlanningApp) {
         this.projectPlanningApp = projectPlanningApp;
@@ -48,7 +45,7 @@ public class ViewAvailableProjectsSteps {
 
     @Then("no projects will be shown")
     public void noProjectsWillBeShown() {
-        assertTrue(projectPlanningApp.getProjectNames().isEmpty());
+        assertFalse(projectPlanningApp.getAllProjectsViewable().isEmpty());
     }
 
 }

@@ -16,6 +16,9 @@ public class User {
         loggedHours.add(logHours);
     }
 
+    private List<Integer> sickDays = new ArrayList<>();
+
+    private List<Integer> vacationDays = new ArrayList<>();
     private List<Task> assignedTasks;
     public User(String initials) {
         this.initials = initials;
@@ -54,6 +57,22 @@ public class User {
         if(assignedTasks.size() < MAX_AMOUNT_OF_ASSIGNED_TASKS){
             this.isAvailable = true;
         }
+    }
+
+    public void addSickDays(Integer days) {
+        sickDays.add(days);
+    }
+
+    public List<Integer> getSickDays(Integer days) {
+        return sickDays;
+    }
+
+    public void addVacationDays(int days) {
+        vacationDays.add(days);
+    }
+
+    public List<Integer> getVacationDays() {
+        return vacationDays;
     }
 
     public Boolean getIsAvailable(){

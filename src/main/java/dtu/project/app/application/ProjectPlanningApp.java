@@ -18,6 +18,8 @@ public class ProjectPlanningApp {
     private User currentUser = null;
     private List<User> users = new ArrayList<User>();
     private List<Project> projects = new ArrayList<Project>();
+    private ObservableList<Project> projectsView = FXCollections.observableArrayList();
+
 
     private boolean loggedIn = false;
 
@@ -137,6 +139,7 @@ public class ProjectPlanningApp {
         }
         return false;
     }
+
 
     public List<String> getProjectNames() {
         List<String> projectNames = new ArrayList<>();
